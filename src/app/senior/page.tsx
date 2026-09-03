@@ -21,7 +21,11 @@ import {
   AlertCircle, 
   ShieldAlert, 
   Sparkles,
-  Mic
+  Mic,
+  Sun,
+  Heart,
+  HelpCircle,
+  Clock
 } from "lucide-react";
 
 export default function SeniorPage() {
@@ -49,6 +53,7 @@ export default function SeniorPage() {
   const profileRef = useRef<SeniorProfile>(profile);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef<SeniorMessage[]>([]);
+  const hasInitialLoadedRef = useRef(false);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -86,8 +91,14 @@ export default function SeniorPage() {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, engineState.transcript, engineState.interimTranscript]);
+    if (!hasInitialLoadedRef.current) {
+      hasInitialLoadedRef.current = true;
+      return;
+    }
+    if (isCallActive || messages.length > 1) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, engineState.transcript, engineState.interimTranscript, isCallActive]);
 
   const handleFontSizeChange = (size: FontSizePreference) => {
     const updated = { ...profile, fontSize: size };
@@ -101,9 +112,8 @@ export default function SeniorPage() {
     setProfile(updated);
     saveSeniorProfile(updated);
     
-    // Jeśli rozmowa trwa, poinformuj o zmianie głosu
     if (isCallActive) {
-      voiceEngine.speak(`Od teraz mówi do Pani ${companionName}.`, undefined, voice);
+      voiceEngine.speak(`Od teraz rozmawia z Tobą ${companionName}.`, undefined, voice);
     }
   };
 
@@ -192,7 +202,7 @@ export default function SeniorPage() {
       const fallbackMsg: SeniorMessage = {
         id: "c_err_" + Date.now(),
         sender: "companion",
-        text: `Pani Mario, jestem przy Pani. Proszę opowiadać dalej, słucham z całą uwagą.`,
+        text: `Jestem przy Tobie. Proszę opowiadaj dalej, słucham z całą uwagą.`,
         timestamp: "Przed chwilą",
       };
       setMessages([...currentHistory, fallbackMsg]);
@@ -250,7 +260,7 @@ export default function SeniorPage() {
       console.warn("Media stream request notice:", e);
     });
 
-    const greeting = `Dzień dobry, ${profile.name}. Jestem przy Tobie. O czym chciałaby Pani dzisiaj porozmawiać?`;
+    const greeting = `Dzień dobry, ${profile.name}. Cieszę się, że jesteśmy razem. O czym chciałabyś dzisiaj porozmawiać?`;
     setStatusLabel("Mówię powitanie...");
 
     const startMicAfterGreeting = () => {
@@ -271,6 +281,19 @@ export default function SeniorPage() {
     voiceEngine.speak(text, undefined, profile.companionVoice);
   };
 
+  // Kliknięcie w gotowe zdanie pomocnicze
+  const handlePromptChipClick = (promptText: string) => {
+    if (!isCallActive) {
+      handleToggleCall().then(() => {
+        setTimeout(() => {
+          processSeniorMessage(promptText);
+        }, 800);
+      });
+    } else {
+      processSeniorMessage(promptText);
+    }
+  };
+
   const fontSizeClass =
     profile.fontSize === "extra-large"
       ? "text-2xl sm:text-3xl leading-relaxed"
@@ -279,24 +302,27 @@ export default function SeniorPage() {
       : "text-lg sm:text-xl leading-relaxed";
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col font-sans relative overflow-x-hidden">
+      {/* Tło o ciepłym świetle */}
+      <div className="fixed inset-0 pointer-events-none -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-100/50 via-[#FAF7F2] to-[#FAF7F2]" />
+
       <TopNav fontSize={profile.fontSize} onFontSizeChange={handleFontSizeChange} />
 
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 flex flex-col items-center">
-        {/* Powiadomienie kryzysowe / bezpiecznik */}
+      <main className="flex-1 max-w-4xl w-full mx-auto px-4 py-6 sm:py-8 flex flex-col items-center">
+        {/* Powiadomienie bezpieczeństwa / opieki */}
         {crisisNotification && (
-          <div className="w-full bg-rose-50 border-2 border-rose-400 rounded-3xl p-5 mb-6 shadow-lg flex items-start gap-4 animate-in fade-in">
+          <div className="w-full bg-rose-50 border-2 border-rose-400 rounded-3xl p-5 mb-6 shadow-xl flex items-start gap-4 animate-in fade-in">
             <ShieldAlert className="w-10 h-10 text-rose-600 shrink-0 mt-1" />
             <div>
-              <h3 className="font-serif text-xl font-bold text-rose-950">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-rose-950">
                 Powiadomienie bezpieczeństwa
               </h3>
-              <p className="text-base text-rose-900 mt-1">
-                Wykryto słowa sugerujące gorsze samopoczucie lub potrzebę pomocy. Jeśli źle się Pani czuje, prosimy nie czekać — zadzwoń pod numer <strong>112</strong> lub skontaktuj się z córką Anną: <strong>+48 601 234 567</strong>.
+              <p className="text-base sm:text-lg text-rose-900 mt-1 leading-relaxed">
+                Wykryto słowa sugerujące gorsze samopoczucie lub potrzebę pomocy. Jeśli źle się Pani czuje, prosimy nie zwlekać — zadzwoń pod numer <strong>112</strong> lub skontaktuj się z córką: <strong>{profile.familyContact.phone}</strong>.
               </p>
               <button
                 onClick={() => setCrisisNotification(null)}
-                className="mt-3 px-4 py-1.5 rounded-full bg-rose-200 text-rose-900 text-sm font-semibold hover:bg-rose-300 transition-colors"
+                className="mt-4 px-6 py-2 rounded-full bg-rose-200 text-rose-900 text-sm font-bold hover:bg-rose-300 transition-colors"
               >
                 Rozumiem, dziękuję
               </button>
@@ -304,40 +330,50 @@ export default function SeniorPage() {
           </div>
         )}
 
-        {/* Błąd mikrofonu jeśli zablokowany */}
+        {/* Informacja o mikrofonie */}
         {engineState.errorMessage && (
-          <div className="w-full bg-amber-50 border border-amber-300 rounded-2xl p-4 mb-4 text-amber-950 text-sm flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-amber-700 shrink-0" />
-            <span>{engineState.errorMessage} — upewnij się, że zezwolono na dostęp do mikrofonu w przeglądarce.</span>
+          <div className="w-full bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 mb-5 text-amber-950 text-sm sm:text-base flex items-center gap-3 shadow-sm">
+            <AlertCircle className="w-6 h-6 text-amber-700 shrink-0" />
+            <span>{engineState.errorMessage} — upewnij się, że zezwolono na mikrofon w przeglądarce.</span>
           </div>
         )}
 
-        {/* Wybór rozmówcy dla seniora */}
-        <div className="flex items-center gap-2 bg-amber-50/80 border border-amber-200/80 p-1.5 rounded-2xl mb-4 shadow-sm">
-          <span className="text-sm font-semibold text-stone-600 pl-3">Rozmówca:</span>
+        {/* Pasek wyboru rozmówcy z portretami */}
+        <div className="flex flex-wrap items-center justify-center gap-3 bg-white/90 backdrop-blur-md border border-amber-200 p-2 rounded-full mb-4 shadow-sm">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-600 pl-3">
+            Twój rozmówca:
+          </span>
+
           <button
             onClick={() => handleToggleCompanionVoice("krystyna")}
-            className={`px-4 py-2 rounded-xl text-base font-bold transition-all ${
+            className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-sm sm:text-base font-bold transition-all ${
               profile.companionVoice === "krystyna"
-                ? "bg-amber-600 text-white shadow-sm"
-                : "text-stone-700 hover:bg-white"
+                ? "bg-amber-600 text-white shadow-md shadow-amber-600/25"
+                : "text-stone-700 hover:bg-stone-100"
             }`}
           >
-            Pani Krystyna (Ciepły)
+            <div className="w-6 h-6 rounded-full overflow-hidden border border-white/60 shrink-0">
+              <img src="/images/hero-senior-krystyna.jpg" alt="Pani Krystyna" className="w-full h-full object-cover" />
+            </div>
+            <span>Pani Krystyna</span>
           </button>
+
           <button
             onClick={() => handleToggleCompanionVoice("stanislaw")}
-            className={`px-4 py-2 rounded-xl text-base font-bold transition-all ${
+            className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-sm sm:text-base font-bold transition-all ${
               profile.companionVoice === "stanislaw"
-                ? "bg-amber-600 text-white shadow-sm"
-                : "text-stone-700 hover:bg-white"
+                ? "bg-stone-900 text-white shadow-md shadow-stone-900/25"
+                : "text-stone-700 hover:bg-stone-100"
             }`}
           >
-            Pan Stanisław (Mądry)
+            <div className="w-6 h-6 rounded-full overflow-hidden border border-white/60 shrink-0">
+              <img src="/images/senior-stanislaw.jpg" alt="Pan Stanisław" className="w-full h-full object-cover" />
+            </div>
+            <span>Pan Stanisław</span>
           </button>
         </div>
 
-        {/* Centralne Słoneczne Serce */}
+        {/* Centralne Żywe Serce (Living Hearth) */}
         <LivingHearthSenior
           size={320}
           isListening={engineState.isListening || engineState.isRecording}
@@ -348,9 +384,9 @@ export default function SeniorPage() {
           onClick={handleToggleCall}
         />
 
-        {/* Dynamiczny pasek stanu */}
-        <div className="w-full max-w-2xl text-center mb-6">
-          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white border border-amber-200 shadow-md">
+        {/* Dynamiczny wskaźnik stanu rozmowy */}
+        <div className="w-full max-w-xl text-center mb-6">
+          <div className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/95 backdrop-blur-md border border-amber-200/90 shadow-md">
             <span
               className={`w-3.5 h-3.5 rounded-full ${
                 isCallActive
@@ -360,50 +396,73 @@ export default function SeniorPage() {
                   : "bg-stone-400"
               }`}
             />
-            <span className="font-serif text-lg font-bold text-stone-800">
+            <span className="font-serif text-lg sm:text-xl font-bold text-stone-900">
               {statusLabel}
             </span>
           </div>
 
           {/* Podgląd tekstu na żywo w trakcie mówienia */}
           {(engineState.transcript || engineState.interimTranscript) && (
-            <div className="mt-3 bg-amber-50 border border-amber-200 rounded-2xl p-4 shadow-sm animate-in fade-in">
+            <div className="mt-3 bg-amber-50/90 border border-amber-300 rounded-2xl p-4 shadow-sm animate-in fade-in">
               <span className="text-xs uppercase font-bold text-amber-900 block mb-1">
-                Rozpoznawane słowa:
+                Słyszę Cię:
               </span>
-              <p className="text-xl font-serif text-stone-900 italic">
+              <p className="text-xl sm:text-2xl font-serif text-stone-950 italic">
                 „{engineState.transcript || engineState.interimTranscript}”
               </p>
             </div>
           )}
         </div>
 
-        {/* Główny przycisk akcji */}
-        <div className="mb-8">
+        {/* Podpowiedzi tematów rozmowy (eliminacja lęku przed brakiem słów) */}
+        <div className="w-full max-w-xl mb-6">
+          <span className="text-xs uppercase font-bold tracking-wider text-stone-500 block text-center mb-2">
+            Możesz też wybrać temat na początek:
+          </span>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {[
+              "Jak minął dzień?",
+              "Opowiedz mi o ogrodzie",
+              "Jakie były Twoje dawne wakacje?",
+              "Chcę po prostu posłuchać głosu",
+            ].map((prompt, i) => (
+              <button
+                key={i}
+                onClick={() => handlePromptChipClick(prompt)}
+                className="px-4 py-2 rounded-full bg-white hover:bg-amber-50 text-stone-800 text-sm font-semibold border border-amber-200/80 shadow-sm transition-all hover:scale-102 active:scale-98"
+              >
+                „{prompt}”
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Główny przycisk dotykowy */}
+        <div className="mb-8 w-full max-w-md">
           <button
             onClick={handleToggleCall}
-            className={`px-8 py-4 rounded-full text-xl font-bold shadow-xl transition-all flex items-center gap-3 active:scale-95 ${
+            className={`w-full py-5 px-8 rounded-full text-xl sm:text-2xl font-bold shadow-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98] ${
               isCallActive
-                ? "bg-stone-800 hover:bg-stone-900 text-white shadow-stone-900/20"
-                : "bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/30"
+                ? "bg-stone-900 hover:bg-stone-800 text-white shadow-stone-900/30"
+                : "bg-amber-600 hover:bg-amber-700 text-white shadow-amber-600/40 hover:-translate-y-0.5"
             }`}
           >
             {isCallActive ? (
               <>
-                <PhoneOff className="w-6 h-6 text-rose-400" />
-                Zakończ rozmowę (Odpocznij)
+                <PhoneOff className="w-7 h-7 text-rose-400" />
+                <span>Zakończ rozmowę (Odpocznij)</span>
               </>
             ) : (
               <>
-                <PhoneCall className="w-6 h-6 text-white" />
-                Dotknij, aby porozmawiać ze mną
+                <PhoneCall className="w-7 h-7 text-white animate-pulse" />
+                <span>Dotknij, aby porozmawiać</span>
               </>
             )}
           </button>
         </div>
 
-        {/* Historia rozmowy */}
-        <div className="w-full max-w-2xl bg-white/90 backdrop-blur-md rounded-3xl border border-amber-900/10 p-5 sm:p-6 shadow-xl mb-6 flex flex-col gap-4 max-h-[440px] overflow-y-auto">
+        {/* Dystyngowana historia rozmowy w stylu klasycznym */}
+        <div className="w-full max-w-2xl bg-white/95 backdrop-blur-md rounded-3xl border border-amber-900/10 p-5 sm:p-6 shadow-xl mb-6 flex flex-col gap-4 max-h-[460px] overflow-y-auto">
           {messages.map((m) => (
             <div
               key={m.id}
@@ -411,14 +470,21 @@ export default function SeniorPage() {
                 m.sender === "senior" ? "items-end" : "items-start"
               }`}
             >
-              <span className="text-xs font-bold text-stone-500 mb-1 px-1">
-                {m.sender === "senior" ? "Twoje słowa" : profile.companionName}
+              <span className="text-xs font-bold text-stone-500 mb-1 px-1 flex items-center gap-1.5">
+                {m.sender === "senior" ? (
+                  "Twoje słowa"
+                ) : (
+                  <>
+                    <Heart className="w-3 h-3 text-amber-600 fill-amber-600" />
+                    {profile.companionName}
+                  </>
+                )}
               </span>
               <div
-                className={`p-5 rounded-3xl max-w-[90%] shadow-sm ${
+                className={`p-5 rounded-3xl max-w-[90%] shadow-sm leading-relaxed ${
                   m.sender === "senior"
                     ? "bg-amber-600 text-white rounded-tr-none font-medium"
-                    : "bg-[#FFFDF9] text-stone-900 border border-amber-200/80 rounded-tl-none font-serif"
+                    : "bg-[#FFFDF9] text-stone-900 border border-amber-200/90 rounded-tl-none font-serif"
                 } ${fontSizeClass}`}
               >
                 {m.text}
@@ -427,11 +493,11 @@ export default function SeniorPage() {
               {m.sender === "companion" && (
                 <button
                   onClick={() => handleManualSpeak(m.text)}
-                  className="mt-1 flex items-center gap-1.5 text-xs font-semibold text-amber-800 hover:text-amber-950 px-2 py-1"
+                  className="mt-1.5 flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-amber-800 hover:text-amber-950 px-2 py-1 transition-colors"
                   title="Posłuchaj ponownie"
                 >
-                  <Volume2 className="w-4 h-4" />
-                  Odtwórz na głos
+                  <Volume2 className="w-4 h-4 text-amber-600" />
+                  Posłuchaj na głos
                 </button>
               )}
             </div>
@@ -439,7 +505,7 @@ export default function SeniorPage() {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Pole tekstowe pomocnicze */}
+        {/* Pomocnicze pole tekstowe (dla seniorów wolących pisać) */}
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -448,28 +514,29 @@ export default function SeniorPage() {
               setTextInput("");
             }
           }}
-          className="w-full max-w-2xl flex items-center gap-3 bg-white p-2.5 rounded-2xl border border-stone-300 shadow-md focus-within:ring-2 focus-within:ring-amber-500"
+          className="w-full max-w-2xl flex items-center gap-3 bg-white p-3 rounded-2xl border border-stone-300 shadow-md focus-within:ring-2 focus-within:ring-amber-500"
         >
           <input
             type="text"
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
-            placeholder="Możesz też napisać wiadomość tutaj..."
-            className="flex-1 px-4 py-2.5 text-lg text-stone-900 placeholder:text-stone-400 focus:outline-none bg-transparent"
+            placeholder="Możesz też wpisać słowa tutaj..."
+            className="flex-1 px-4 py-2.5 text-base sm:text-lg text-stone-900 placeholder:text-stone-400 focus:outline-none bg-transparent"
           />
           <button
             type="submit"
             disabled={!textInput.trim() || engineState.isProcessing}
-            className="p-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white rounded-xl transition-all"
+            className="px-5 py-3 bg-amber-600 hover:bg-amber-700 disabled:opacity-40 text-white rounded-xl font-bold transition-all flex items-center gap-2"
             aria-label="Wyślij wiadomość"
           >
-            <Send className="w-5 h-5" />
+            <span>Wyślij</span>
+            <Send className="w-4 h-4" />
           </button>
         </form>
       </main>
 
-      <footer className="w-full bg-stone-100 border-t border-stone-200 py-4 text-center text-sm text-stone-600">
-        Telefon Zaufania dla Osób Starszych: <strong>22 635 09 54</strong> • W nagłych wypadkach: <strong>112</strong>
+      <footer className="w-full bg-stone-100 border-t border-stone-200 py-4 text-center text-xs sm:text-sm text-stone-600 px-4">
+        Całodobowy Telefon Zaufania dla Seniorów: <strong>22 635 09 54</strong> • W nagłym wypadku: <strong>112</strong>
       </footer>
     </div>
   );

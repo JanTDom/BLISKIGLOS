@@ -18,7 +18,11 @@ import {
   CreditCard,
   Flame,
   Lightbulb,
-  ArrowRight
+  ArrowRight,
+  Sun,
+  Volume2,
+  FileText,
+  Bookmark
 } from "lucide-react";
 
 export default function FamilyGuardianPage() {
@@ -40,68 +44,69 @@ export default function FamilyGuardianPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col font-sans">
+    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col font-sans selection:bg-amber-200">
       <TopNav />
 
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
         {/* Nagłówek Portalu Opiekuna */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-8 border-b border-amber-900/10">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-amber-900/10">
           <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-900 text-xs font-bold uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-950 text-xs font-bold uppercase tracking-wider mb-3 border border-amber-200">
               <ShieldCheck className="w-4 h-4 text-amber-700" />
-              Strefa Opiekuna & Rodziny
+              <span>Strefa Opiekuna & Rodziny</span>
             </div>
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-stone-900">
+            <h1 className="font-serif text-3xl sm:text-5xl font-bold text-stone-950 tracking-tight">
               Pulpit Dobrostanu: {profile.name}
             </h1>
-            <p className="text-stone-600 mt-1">
-              Bieżący podgląd rozmów, samopoczucia i ocalonych wspomnień Twojej bliskiej osoby.
+            <p className="text-stone-600 text-base sm:text-lg mt-2 max-w-2xl">
+              Codzienny podgląd samopoczucia, sesji terapeutycznych oraz ocalonych wspomnień Twojej bliskiej osoby.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <Link
               href="/senior"
-              className="px-5 py-2.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-semibold text-sm shadow-md shadow-amber-600/20 transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm shadow-md shadow-amber-600/20 transition-all flex items-center gap-2"
             >
-              Przejdź do widoku Seniora
+              <span>Otwórz widok Seniora</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
 
         {/* Zakładki */}
-        <div className="flex items-center gap-2 my-6 border-b border-stone-200">
+        <div className="flex items-center gap-2 my-8 border-b border-stone-200">
           <button
             onClick={() => setActiveTab("dashboard")}
-            className={`px-5 py-3 text-base font-bold border-b-2 transition-all ${
+            className={`px-6 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === "dashboard"
-                ? "border-amber-600 text-amber-900"
+                ? "border-amber-600 text-amber-950"
                 : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
+            <Clock className="w-4 h-4 text-amber-600" />
             Dziennik i Samopoczucie
           </button>
           <button
             onClick={() => setActiveTab("memories")}
-            className={`px-5 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`px-6 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === "memories"
-                ? "border-amber-600 text-amber-900"
+                ? "border-amber-600 text-amber-950"
                 : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
-            <BookOpen className="w-4 h-4" />
+            <BookOpen className="w-4 h-4 text-amber-600" />
             Kronika Wspomnień ({reminiscences.length})
           </button>
           <button
             onClick={() => setActiveTab("settings")}
-            className={`px-5 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`px-6 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
               activeTab === "settings"
-                ? "border-amber-600 text-amber-900"
+                ? "border-amber-600 text-amber-950"
                 : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
-            <Settings className="w-4 h-4" />
+            <Settings className="w-4 h-4 text-stone-500" />
             Ustawienia & Subskrypcja
           </button>
         </div>
@@ -111,7 +116,7 @@ export default function FamilyGuardianPage() {
           <div className="space-y-8">
             {/* Karty metryk na samej górze */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-              <div className="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
+              <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-emerald-100 flex items-center justify-center shrink-0">
                   <CheckCircle2 className="w-7 h-7 text-emerald-600" />
                 </div>
@@ -125,13 +130,13 @@ export default function FamilyGuardianPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
+              <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center shrink-0">
                   <Clock className="w-7 h-7 text-amber-600" />
                 </div>
                 <div>
                   <span className="text-xs text-stone-500 font-bold uppercase tracking-wider block">
-                    Czas rozmów dzisiaj
+                    Rozmowy dzisiaj
                   </span>
                   <span className="font-serif text-2xl font-bold text-stone-900">
                     18 minut
@@ -139,7 +144,7 @@ export default function FamilyGuardianPage() {
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
+              <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-orange-100 flex items-center justify-center shrink-0">
                   <Flame className="w-7 h-7 text-orange-600" />
                 </div>
@@ -148,18 +153,18 @@ export default function FamilyGuardianPage() {
                     Ciągłość obecności
                   </span>
                   <span className="font-serif text-2xl font-bold text-stone-900">
-                    {profile.streakDays} dni z rzędu
+                    {profile.streakDays || 12} dni z rzędu
                   </span>
                 </div>
               </div>
 
-              <div className="bg-white p-5 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
+              <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm flex items-center gap-4">
                 <div className="w-14 h-14 rounded-2xl bg-purple-100 flex items-center justify-center shrink-0">
                   <Heart className="w-7 h-7 text-purple-600" />
                 </div>
                 <div>
                   <span className="text-xs text-stone-500 font-bold uppercase tracking-wider block">
-                    Rozmówca seniora
+                    Towarzysz rozmów
                   </span>
                   <span className="font-serif text-xl font-bold text-stone-900">
                     {profile.companionName}
@@ -169,24 +174,27 @@ export default function FamilyGuardianPage() {
             </div>
 
             {/* Wskazówka i analiza terapeutyczna od AI */}
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md">
-                  <Lightbulb className="w-6 h-6" />
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200/90 rounded-3xl p-6 sm:p-8 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-start gap-5">
+                <div className="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-md">
+                  <Lightbulb className="w-7 h-7" />
                 </div>
                 <div>
-                  <h3 className="font-serif text-xl sm:text-2xl font-bold text-amber-950">
-                    Rekomendacja dla rodziny na ten tydzień
+                  <span className="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-200/60 px-3 py-1 rounded-full">
+                    Spostrzeżenie terapeutyczne AI
+                  </span>
+                  <h3 className="font-serif text-2xl sm:text-3xl font-bold text-amber-950 mt-2">
+                    Rekomendacja dla rodziny na nadchodzący weekend
                   </h3>
-                  <p className="text-stone-700 text-lg mt-2 leading-relaxed">
+                  <p className="text-stone-700 text-lg mt-3 leading-relaxed">
                     Podczas dzisiejszej rozmowy Mama z dużym wzruszeniem wspominała pieczenie chleba i dawne soboty na wsi. Nie było żadnych niepokojów wieczornych (sundowning).
                   </p>
-                  <div className="mt-4 p-4 rounded-2xl bg-white/80 border border-amber-300/60 flex items-center gap-3">
-                    <span className="text-xs font-bold uppercase tracking-wider bg-amber-600 text-white px-2.5 py-1 rounded-md">
+                  <div className="mt-5 p-4 rounded-2xl bg-white/90 border border-amber-300 flex items-start gap-3 shadow-sm">
+                    <span className="text-xs font-bold uppercase tracking-wider bg-amber-600 text-white px-2.5 py-1 rounded-md shrink-0 mt-0.5">
                       Wskazówka
                     </span>
-                    <span className="text-sm font-semibold text-stone-800">
-                      Gdy zadzwonisz w niedzielę, zapytaj Mamę o Jej przepis na drożdżowe ciasto — rozmowa o smakach dzieciństwa wywołuje u Niej głębokie poczucie bezpieczeństwa.
+                    <span className="text-base font-semibold text-stone-800 leading-snug">
+                      Gdy zadzwonisz w niedzielę, zapytaj Mamę o Jej przepis na drożdżowe ciasto — rozmowa o zapachach dzieciństwa wywołuje u Niej głębokie poczucie bezpieczeństwa.
                     </span>
                   </div>
                 </div>
@@ -249,45 +257,66 @@ export default function FamilyGuardianPage() {
 
         {/* 2. ZAKŁADKA KRONIKA WSPOMNIEŃ (Reminiscence Vault) */}
         {activeTab === "memories" && (
-          <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm">
-              <h2 className="font-serif text-2xl font-bold text-stone-900 mb-2">
-                Ocalone Wspomnienia Seniora
-              </h2>
-              <p className="text-stone-600 mb-6">
-                Dzięki Terapii Reminiscencyjnej agent automatycznie rejestruje i spisuje najcenniejsze historie, zanim zatarłby je czas. To bezcenne dziedzictwo dla dzieci i wnuków.
-              </p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {reminiscences.map((rem) => (
-                  <div
-                    key={rem.id}
-                    className="p-6 rounded-3xl bg-[#FFFDF9] border border-amber-200/80 shadow-sm flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between gap-2 mb-2">
-                        <span className="text-xs uppercase font-bold tracking-wider text-amber-800 bg-amber-100 px-3 py-1 rounded-full">
-                          {rem.decadeOrEra || "Dawne czasy"}
-                        </span>
-                        <span className="text-xs text-stone-400 font-medium">
-                          {rem.dateExtracted}
-                        </span>
-                      </div>
-                      <h4 className="font-serif text-xl font-bold text-stone-900 mb-2">
-                        {rem.title}
-                      </h4>
-                      <p className="text-stone-700 font-serif italic leading-relaxed text-base">
-                        „{rem.story}”
-                      </p>
-                    </div>
-
-                    <div className="mt-4 pt-3 border-t border-amber-100 flex items-center justify-between text-xs text-amber-900/80 font-semibold">
-                      <span>Emocja: {rem.emotion}</span>
-                      <span className="text-stone-400">Zapisano z głosu</span>
-                    </div>
-                  </div>
-                ))}
+          <div className="space-y-8">
+            {/* Banner z fotografią dłoni pokoleń */}
+            <div className="relative rounded-3xl overflow-hidden shadow-xl border-2 border-amber-200 bg-stone-900 text-white">
+              <div className="grid grid-cols-1 md:grid-cols-12 items-center">
+                <div className="md:col-span-7 p-6 sm:p-10 z-10">
+                  <span className="text-xs uppercase font-extrabold tracking-widest text-amber-300 bg-amber-950/60 px-3 py-1 rounded-full border border-amber-800">
+                    Dziedzictwo dla pokoleń
+                  </span>
+                  <h2 className="font-serif text-3xl sm:text-4xl font-bold mt-3 leading-tight">
+                    Ocalone Wspomnienia Seniora
+                  </h2>
+                  <p className="text-stone-300 mt-3 text-base sm:text-lg leading-relaxed">
+                    Dzięki Terapii Reminiscencyjnej agent automatycznie rejestruje i spisuje najcenniejsze historie, zanim zatarłby je czas. To bezcenne dziedzictwo dla dzieci i wnuków.
+                  </p>
+                </div>
+                <div className="md:col-span-5 h-64 md:h-full relative overflow-hidden">
+                  <img
+                    src="/images/family-care-hands.jpg"
+                    alt="Dłonie pokoleń"
+                    className="w-full h-full object-cover object-center filter brightness-95"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-r from-stone-900 via-transparent to-transparent" />
+                </div>
               </div>
+            </div>
+
+            {/* Karty wspomnień w stylu tomiku wspomnień */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {reminiscences.map((rem) => (
+                <div
+                  key={rem.id}
+                  className="p-7 rounded-3xl bg-[#FFFDF9] border-2 border-amber-200/90 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow relative overflow-hidden"
+                >
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-amber-100/30 rounded-bl-full pointer-events-none" />
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="text-xs uppercase font-bold tracking-wider text-amber-800 bg-amber-100/90 px-3 py-1 rounded-full">
+                        {rem.decadeOrEra || "Dawne czasy"}
+                      </span>
+                      <span className="text-xs text-stone-500 font-medium">
+                        {rem.dateExtracted}
+                      </span>
+                    </div>
+                    <h4 className="font-serif text-2xl font-bold text-stone-950 mb-3">
+                      {rem.title}
+                    </h4>
+                    <p className="text-stone-700 font-serif italic leading-relaxed text-lg">
+                      „{rem.story}”
+                    </p>
+                  </div>
+
+                  <div className="mt-6 pt-4 border-t border-amber-100 flex items-center justify-between text-xs text-amber-900 font-semibold">
+                    <span className="flex items-center gap-1.5">
+                      <Heart className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
+                      Emocja: {rem.emotion}
+                    </span>
+                    <span className="text-stone-500">Zarejestrowano z głosu na żywo</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -307,7 +336,7 @@ export default function FamilyGuardianPage() {
                 </div>
               )}
 
-              <form onSubmit={handleUpdateProfile} className="space-y-5">
+              <form onSubmit={handleUpdateProfile} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-1.5">
@@ -317,7 +346,7 @@ export default function FamilyGuardianPage() {
                       type="text"
                       value={profile.name}
                       onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      className="w-full px-4 py-3 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
                     />
                   </div>
 
@@ -329,8 +358,64 @@ export default function FamilyGuardianPage() {
                       type="number"
                       value={profile.age || 82}
                       onChange={(e) => setProfile({ ...profile, age: Number(e.target.value) })}
-                      className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      className="w-full px-4 py-3 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
                     />
+                  </div>
+                </div>
+
+                {/* Wybór domyślnego lektora ze zdjęciami */}
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-stone-600 mb-2">
+                    Domyślny głos towarzysza
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setProfile({
+                          ...profile,
+                          companionVoice: "krystyna",
+                          companionName: "Pani Krystyna",
+                        })
+                      }
+                      className={`p-4 rounded-2xl border-2 text-left flex items-center gap-3 transition-all ${
+                        profile.companionVoice === "krystyna"
+                          ? "border-amber-600 bg-amber-50/80 shadow-md"
+                          : "border-stone-200 hover:border-stone-300"
+                      }`}
+                    >
+                      <div className="w-12 h-12 rounded-xl overflow-hidden border border-amber-300 shrink-0">
+                        <img src="/images/hero-senior-krystyna.jpg" alt="Pani Krystyna" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <strong className="block text-sm text-stone-900">Pani Krystyna</strong>
+                        <span className="text-xs text-stone-500">Ciepły, matczyny ton</span>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setProfile({
+                          ...profile,
+                          companionVoice: "stanislaw",
+                          companionName: "Pan Stanisław",
+                        })
+                      }
+                      className={`p-4 rounded-2xl border-2 text-left flex items-center gap-3 transition-all ${
+                        profile.companionVoice === "stanislaw"
+                          ? "border-amber-600 bg-amber-50/80 shadow-md"
+                          : "border-stone-200 hover:border-stone-300"
+                      }`}
+                    >
+                      <div className="w-12 h-12 rounded-xl overflow-hidden border border-amber-300 shrink-0">
+                        <img src="/images/senior-stanislaw.jpg" alt="Pan Stanisław" className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <strong className="block text-sm text-stone-900">Pan Stanisław</strong>
+                        <span className="text-xs text-stone-500">Spokojny dżentelmen</span>
+                      </div>
+                    </button>
                   </div>
                 </div>
 
@@ -343,7 +428,7 @@ export default function FamilyGuardianPage() {
                     value={profile.specialNotes}
                     onChange={(e) => setProfile({ ...profile, specialNotes: e.target.value })}
                     placeholder="Np. Mama tęskni za Wilnem, kocha kwiaty, nie pamięta dat ale uwielbia słuchać o ogrodzie..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-4 py-3 rounded-xl border border-stone-300 text-stone-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   />
                   <p className="text-xs text-stone-500 mt-1">
                     Agent wykorzysta te wskazówki, aby prowadzić bezpieczne rozmowy walidacyjne.
@@ -366,7 +451,7 @@ export default function FamilyGuardianPage() {
                             familyContact: { ...profile.familyContact, name: e.target.value },
                           })
                         }
-                        className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm"
+                        className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-sm"
                       />
                     </div>
                     <div>
@@ -380,7 +465,7 @@ export default function FamilyGuardianPage() {
                             familyContact: { ...profile.familyContact, phone: e.target.value },
                           })
                         }
-                        className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm"
+                        className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-sm"
                       />
                     </div>
                     <div>
@@ -394,7 +479,7 @@ export default function FamilyGuardianPage() {
                             familyContact: { ...profile.familyContact, email: e.target.value },
                           })
                         }
-                        className="w-full px-3 py-2 rounded-xl border border-stone-300 text-sm"
+                        className="w-full px-3 py-2.5 rounded-xl border border-stone-300 text-sm"
                       />
                     </div>
                   </div>
@@ -402,7 +487,7 @@ export default function FamilyGuardianPage() {
 
                 <button
                   type="submit"
-                  className="px-6 py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold transition-all shadow-md"
+                  className="px-8 py-3.5 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold transition-all shadow-md hover:shadow-lg"
                 >
                   Zapisz ustawienia opieki
                 </button>
@@ -423,11 +508,11 @@ export default function FamilyGuardianPage() {
                   Nielimitowane rozmowy głosowe AI dla seniora + codzienne powiadomienia i kronika wspomnień.
                 </p>
 
-                <div className="mt-6 p-4 rounded-2xl bg-stone-800 border border-stone-700">
-                  <span className="text-3xl font-serif font-bold text-amber-400">89 zł</span>
+                <div className="mt-6 p-5 rounded-2xl bg-stone-800 border border-stone-700">
+                  <span className="text-4xl font-serif font-bold text-amber-400">89 zł</span>
                   <span className="text-stone-400 text-sm"> / miesiąc</span>
-                  <p className="text-xs text-emerald-400 font-semibold mt-2 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+                  <p className="text-xs text-emerald-400 font-semibold mt-3 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4" />
                     Kolejne odnowienie: 3 października 2026
                   </p>
                 </div>
@@ -436,7 +521,7 @@ export default function FamilyGuardianPage() {
               <div className="mt-8 pt-6 border-t border-stone-800">
                 <Link
                   href="/cennik"
-                  className="w-full py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-center block text-sm transition-all"
+                  className="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-center block text-sm transition-all shadow-md"
                 >
                   Zmień plan lub zarządzaj płatnością
                 </Link>
