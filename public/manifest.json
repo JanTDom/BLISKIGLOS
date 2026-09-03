@@ -1,0 +1,16 @@
+{
+  "name": "BliskiGłos",
+  "short_name": "BliskiGłos",
+  "start_url": "/senior",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "description": "Terapeutyczny towarzysz rozmowy dla seniorów",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
