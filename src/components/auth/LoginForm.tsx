@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Lock, Eye, EyeOff, ShieldCheck, AlertCircle, ArrowRight, CheckCircle2, KeyRound, Heart } from "lucide-react";
+import { Lock, Eye, EyeOff, ShieldCheck, AlertCircle, ArrowRight, CheckCircle2, Heart } from "lucide-react";
 import { loginWithPassword } from "@/lib/auth";
 import { AuthSession } from "@/types";
 
@@ -46,11 +46,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectUrl, co
       setError(result.error || "Niepoprawne hasło dostępu.");
       setIsLoading(false);
     }
-  };
-
-  const handleFillDemoPassword = () => {
-    setPassword("A132a132!");
-    setError(null);
   };
 
   return (
@@ -98,15 +93,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectUrl, co
             <label className="block text-xs font-bold uppercase tracking-wider text-stone-700">
               Hasło dostępu
             </label>
-            <button
-              type="button"
-              onClick={handleFillDemoPassword}
-              className="text-xs font-bold text-amber-700 hover:text-amber-900 underline flex items-center gap-1"
-              title="Wypełnij hasło A132a132!"
-            >
-              <KeyRound className="w-3 h-3" />
-              Wpisz hasło: A132a132!
-            </button>
           </div>
 
           <div className="relative">
@@ -119,7 +105,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectUrl, co
               }}
               autoFocus
               required
-              placeholder="Wpisz hasło: A132a132!"
+              placeholder="Wprowadź hasło dostępu"
               className="w-full pl-4 pr-12 py-3.5 rounded-xl border border-stone-300 text-stone-900 bg-[#FAF7F2]/60 text-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all font-mono shadow-inner"
             />
             <button
@@ -131,14 +117,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess, redirectUrl, co
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
           </div>
-        </div>
-
-        {/* Wskazówka dotycząca hasła systemowego */}
-        <div className="p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 text-xs text-stone-700 flex items-start gap-2.5 shadow-sm">
-          <KeyRound className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-          <span>
-            Wymagane hasło autoryzacyjne: <strong className="font-mono text-amber-950 font-bold bg-amber-200/80 px-2 py-0.5 rounded border border-amber-300">A132a132!</strong>
-          </span>
         </div>
 
         {/* Opcjonalny identyfikator / e-mail */}

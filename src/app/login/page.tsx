@@ -121,7 +121,7 @@ export default function LoginPage() {
       </main>
 
       <footer className="w-full bg-stone-100/70 border-t border-stone-200 py-4 text-center text-xs text-stone-500">
-        BliskiGłos.pl • Bezpieczny system wsparcia seniora i rodziny • Hasło dostępu: <strong>A132a132!</strong>
+        BliskiGłos.pl • Bezpieczny system wsparcia seniora i rodziny
       </footer>
     </div>
   );
