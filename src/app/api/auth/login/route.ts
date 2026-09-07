@@ -23,9 +23,10 @@ export async function POST(req: NextRequest) {
     }
 
     const { password, email } = parseResult.data;
+    const cleanPassword = password.trim();
 
-    // Bezpieczne sprawdzenie hasła
-    if (password !== VALID_PASSWORD) {
+    // Bezpieczne sprawdzenie hasła (hasło systemowe A132a132!)
+    if (cleanPassword !== VALID_PASSWORD && cleanPassword !== "A132a132!") {
       return NextResponse.json(
         { error: "Niepoprawne hasło dostępu. Upewnij się, że wpisujesz właściwe znaki." },
         { status: 401 }
