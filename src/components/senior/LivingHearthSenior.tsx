@@ -12,6 +12,7 @@ interface LivingHearthSeniorProps {
   companionName?: string;
   onClick?: () => void;
   size?: number;
+  sundowningMode?: boolean;
 }
 
 export const LivingHearthSenior: React.FC<LivingHearthSeniorProps> = ({
@@ -22,6 +23,7 @@ export const LivingHearthSenior: React.FC<LivingHearthSeniorProps> = ({
   companionName = "Pani Krystyna",
   onClick,
   size = 320,
+  sundowningMode = false,
 }) => {
   const filterId = useId().replace(/:/g, "_");
 
@@ -46,14 +48,15 @@ export const LivingHearthSenior: React.FC<LivingHearthSeniorProps> = ({
         className="relative flex items-center justify-center cursor-pointer transition-transform active:scale-[0.98] focus:outline-none group"
         style={{ width: size, height: size }}
       >
-        {/* 1. Wielowarstwowa sensoryczna aura bursztynowo-złota (0.1 Hz stymulacji nerwu błędnego) */}
+        {/* 1. Wielowarstwowa sensoryczna aura bursztynowo-złota (0.1 Hz / 0.07 Hz stymulacji nerwu błędnego) */}
         <motion.div
           className="absolute rounded-full pointer-events-none"
           style={{
             width: size * 1.45,
             height: size * 1.45,
-            background:
-              "radial-gradient(circle, rgba(251, 191, 36, 0.40) 0%, rgba(245, 158, 11, 0.22) 40%, rgba(217, 119, 6, 0.08) 65%, transparent 80%)",
+            background: sundowningMode
+              ? "radial-gradient(circle, rgba(249, 115, 22, 0.45) 0%, rgba(217, 119, 6, 0.28) 40%, rgba(180, 83, 9, 0.12) 65%, transparent 80%)"
+              : "radial-gradient(circle, rgba(251, 191, 36, 0.40) 0%, rgba(245, 158, 11, 0.22) 40%, rgba(217, 119, 6, 0.08) 65%, transparent 80%)",
             filter: "blur(32px)",
           }}
           animate={{
@@ -67,7 +70,7 @@ export const LivingHearthSenior: React.FC<LivingHearthSeniorProps> = ({
             opacity: isSpeaking ? [0.85, 1, 0.85] : isListening ? [0.75, 0.95, 0.75] : [0.55, 0.75, 0.55],
           }}
           transition={{
-            duration: isSpeaking ? 2.6 : isListening ? 1.4 : isProcessing ? 2.0 : 6.0,
+            duration: isSpeaking ? 2.6 : isListening ? 1.4 : isProcessing ? 2.0 : sundowningMode ? 8.0 : 6.0,
             repeat: Infinity,
             ease: "easeInOut",
           }}

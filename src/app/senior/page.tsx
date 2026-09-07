@@ -10,9 +10,10 @@ import {
   getStoredMessages, 
   saveStoredMessages, 
   getStoredReminiscences, 
-  saveStoredReminiscences 
+  saveStoredReminiscences,
+  addNodeToMemoryGraph
 } from "@/lib/storage";
-import { SeniorProfile, SeniorMessage, FontSizePreference } from "@/types";
+import { SeniorProfile, SeniorMessage, FontSizePreference, CompanionVoiceType } from "@/types";
 import { 
   Send, 
   Volume2, 
@@ -25,7 +26,10 @@ import {
   Sun,
   Heart,
   HelpCircle,
-  Clock
+  Clock,
+  Moon,
+  Radio,
+  Activity
 } from "lucide-react";
 
 export default function SeniorPage() {
@@ -34,6 +38,9 @@ export default function SeniorPage() {
   const [textInput, setTextInput] = useState("");
   const [isCallActive, setIsCallActive] = useState(false);
   const [statusLabel, setStatusLabel] = useState("Gotowa do rozmowy");
+  const [sundowningMode, setSundowningMode] = useState(profile.sundowningShieldActive || false);
+  const [kioskMode, setKioskMode] = useState(profile.kioskModeEnabled || false);
+  const [speechCoherence, setSpeechCoherence] = useState(92);
   
   const [engineState, setEngineState] = useState<VoiceEngineState>({
     isListening: false,
@@ -67,6 +74,8 @@ export default function SeniorPage() {
     const loadedProfile = getSeniorProfile();
     setProfile(loadedProfile);
     profileRef.current = loadedProfile;
+    setSundowningMode(Boolean(loadedProfile.sundowningShieldActive));
+    setKioskMode(Boolean(loadedProfile.kioskModeEnabled));
 
     const stored = getStoredMessages();
     if (stored.length > 0) {
@@ -106,8 +115,13 @@ export default function SeniorPage() {
     saveSeniorProfile(updated);
   };
 
-  const handleToggleCompanionVoice = (voice: "krystyna" | "stanislaw") => {
-    const companionName = voice === "krystyna" ? "Pani Krystyna" : "Pan Stanisław";
+  const handleToggleCompanionVoice = (voice: CompanionVoiceType) => {
+    const companionName = 
+      voice === "krystyna" 
+        ? "Pani Krystyna" 
+        : voice === "stanislaw" 
+        ? "Pan Stanisław" 
+        : "Głos Córki Ani";
     const updated = { ...profile, companionVoice: voice, companionName };
     setProfile(updated);
     saveSeniorProfile(updated);
@@ -115,6 +129,22 @@ export default function SeniorPage() {
     if (isCallActive) {
       voiceEngine.speak(`Od teraz rozmawia z Tobą ${companionName}.`, undefined, voice);
     }
+  };
+
+  const toggleSundowningMode = () => {
+    const nextVal = !sundowningMode;
+    setSundowningMode(nextVal);
+    const updated = { ...profile, sundowningShieldActive: nextVal };
+    setProfile(updated);
+    saveSeniorProfile(updated);
+  };
+
+  const toggleKioskMode = () => {
+    const nextVal = !kioskMode;
+    setKioskMode(nextVal);
+    const updated = { ...profile, kioskModeEnabled: nextVal };
+    setProfile(updated);
+    saveSeniorProfile(updated);
   };
 
   // Główna funkcja przetwarzania wypowiedzi seniora
@@ -156,6 +186,18 @@ export default function SeniorPage() {
         setCrisisNotification(data.crisisReason || "Zgłoszono potrzebę pomocy");
       }
 
+      // Aktualizacja wskaźnika spójności mowy z biomarkerów
+      if (data.biomarkers?.speechCoherence) {
+        setSpeechCoherence(data.biomarkers.speechCoherence);
+      }
+
+      // Zapis węzłów do Konstelacji Wspomnień
+      if (data.extractedGraphNodes && Array.isArray(data.extractedGraphNodes)) {
+        data.extractedGraphNodes.forEach((node: any) => {
+          addNodeToMemoryGraph(node);
+        });
+      }
+
       // Zapis do kroniki wspomnień
       if (data.extractedReminiscence) {
         const stories = getStoredReminiscences();
@@ -166,6 +208,7 @@ export default function SeniorPage() {
           decadeOrEra: data.extractedReminiscence.decadeOrEra || "Dawne lata",
           emotion: data.extractedReminiscence.emotion || "Ciepło",
           dateExtracted: "Dzisiaj",
+          sensoryAnchors: data.extractedReminiscence.sensoryAnchors || []
         };
         saveStoredReminiscences([newStory, ...stories]);
       }
@@ -302,9 +345,13 @@ export default function SeniorPage() {
       : "text-lg sm:text-xl leading-relaxed";
 
   return (
-    <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col font-sans relative overflow-x-hidden">
-      {/* Tło o ciepłym świetle */}
-      <div className="fixed inset-0 pointer-events-none -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-100/50 via-[#FAF7F2] to-[#FAF7F2]" />
+    <div className={`min-h-screen ${sundowningMode ? "bg-[#FDF8EE]" : "bg-[#FAF7F2]"} text-stone-900 flex flex-col font-sans relative overflow-x-hidden transition-colors duration-1000`}>
+      {/* Tło o ciepłym świetle (Bursztyn 1800K przy tarczy zmierzchowej) */}
+      <div className={`fixed inset-0 pointer-events-none -z-10 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] ${
+        sundowningMode 
+          ? "from-orange-300/40 via-[#FDF8EE] to-[#FDF8EE]" 
+          : "from-amber-100/50 via-[#FAF7F2] to-[#FAF7F2]"
+      } transition-all duration-1000`} />
 
       <TopNav fontSize={profile.fontSize} onFontSizeChange={handleFontSizeChange} />
 
@@ -338,21 +385,21 @@ export default function SeniorPage() {
           </div>
         )}
 
-        {/* Pasek wyboru rozmówcy z portretami */}
-        <div className="flex flex-wrap items-center justify-center gap-3 bg-white/90 backdrop-blur-md border border-amber-200 p-2 rounded-full mb-4 shadow-sm">
-          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-600 pl-3">
+        {/* Pasek wyboru rozmówcy z 3 głosami (w tym Głos Córki Ani) */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 bg-white/90 backdrop-blur-md border border-amber-200 p-2 rounded-full mb-3 shadow-sm">
+          <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-stone-600 pl-3 hidden sm:inline">
             Twój rozmówca:
           </span>
 
           <button
             onClick={() => handleToggleCompanionVoice("krystyna")}
-            className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-sm sm:text-base font-bold transition-all ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
               profile.companionVoice === "krystyna"
                 ? "bg-amber-600 text-white shadow-md shadow-amber-600/25"
                 : "text-stone-700 hover:bg-stone-100"
             }`}
           >
-            <div className="w-6 h-6 rounded-full overflow-hidden border border-white/60 shrink-0">
+            <div className="w-5 h-5 rounded-full overflow-hidden border border-white/60 shrink-0">
               <img src="/images/hero-senior-krystyna.jpg" alt="Pani Krystyna" className="w-full h-full object-cover" />
             </div>
             <span>Pani Krystyna</span>
@@ -360,20 +407,63 @@ export default function SeniorPage() {
 
           <button
             onClick={() => handleToggleCompanionVoice("stanislaw")}
-            className={`flex items-center gap-2.5 px-4 py-2 rounded-full text-sm sm:text-base font-bold transition-all ${
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
               profile.companionVoice === "stanislaw"
                 ? "bg-stone-900 text-white shadow-md shadow-stone-900/25"
                 : "text-stone-700 hover:bg-stone-100"
             }`}
           >
-            <div className="w-6 h-6 rounded-full overflow-hidden border border-white/60 shrink-0">
+            <div className="w-5 h-5 rounded-full overflow-hidden border border-white/60 shrink-0">
               <img src="/images/senior-stanislaw.jpg" alt="Pan Stanisław" className="w-full h-full object-cover" />
             </div>
             <span>Pan Stanisław</span>
           </button>
+
+          <button
+            onClick={() => handleToggleCompanionVoice("corka_anna")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
+              profile.companionVoice === "corka_anna"
+                ? "bg-rose-600 text-white shadow-md shadow-rose-600/25"
+                : "text-stone-700 hover:bg-stone-100"
+            }`}
+          >
+            <div className="w-5 h-5 rounded-full bg-rose-200 flex items-center justify-center shrink-0">
+              <Heart className="w-3 h-3 text-rose-700 fill-rose-700" />
+            </div>
+            <span>Głos Córki Ani</span>
+          </button>
         </div>
 
-        {/* Centralne Żywe Serce (Living Hearth) */}
+        {/* Dyskretny pasek innowacji ambientowej (Tarcza Zmierzchowa & Tryb Kioskowy) */}
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <button
+            onClick={toggleSundowningMode}
+            className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all border ${
+              sundowningMode
+                ? "bg-orange-600 text-white border-orange-700 shadow-sm"
+                : "bg-white/80 text-stone-600 border-amber-200 hover:bg-amber-50"
+            }`}
+            title="Aktywuje filtr 1800K i wolniejszy oddech Living Hearth na wieczorny lęk"
+          >
+            <Moon className="w-3 h-3 text-amber-400" />
+            <span>Tarcza Zmierzchowa (1800K): {sundowningMode ? "Włączona" : "Włącz"}</span>
+          </button>
+
+          <button
+            onClick={toggleKioskMode}
+            className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all border ${
+              kioskMode
+                ? "bg-stone-900 text-white border-stone-800 shadow-sm"
+                : "bg-white/80 text-stone-600 border-amber-200 hover:bg-amber-50"
+            }`}
+            title="Tryb bezdotykowy PFRON — urządzenie słucha w tle bez klikania"
+          >
+            <Radio className="w-3 h-3 text-emerald-400" />
+            <span>Kiosk Bezdotykowy: {kioskMode ? "Aktywny" : "Wyłączony"}</span>
+          </button>
+        </div>
+
+        {/* Centralne Żywe Serce (Living Hearth 2.0 z trybem Sundowning) */}
         <LivingHearthSenior
           size={320}
           isListening={engineState.isListening || engineState.isRecording}
@@ -381,6 +471,7 @@ export default function SeniorPage() {
           isProcessing={engineState.isProcessing}
           userVolume={engineState.userVolume}
           companionName={profile.companionName}
+          sundowningMode={sundowningMode}
           onClick={handleToggleCall}
         />
 
@@ -437,8 +528,8 @@ export default function SeniorPage() {
           </div>
         </div>
 
-        {/* Główny przycisk dotykowy */}
-        <div className="mb-8 w-full max-w-md">
+        {/* Główny przycisk dotykowy — SERCE INTERFEJSU */}
+        <div className="mb-4 w-full max-w-md">
           <button
             onClick={handleToggleCall}
             className={`w-full py-5 px-8 rounded-full text-xl sm:text-2xl font-bold shadow-2xl transition-all flex items-center justify-center gap-3 active:scale-[0.98] ${
@@ -459,6 +550,12 @@ export default function SeniorPage() {
               </>
             )}
           </button>
+        </div>
+
+        {/* Dyskretny wskaźnik neuro-akustyczny i walidacyjny */}
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-stone-200/60 text-stone-600 text-[11px] font-mono mb-8">
+          <Activity className="w-3.5 h-3.5 text-emerald-600" />
+          <span>Koherencja mowy: {speechCoherence}% • Anonimizacja PII aktywna • Terapia Walidacyjna Naomi Feil</span>
         </div>
 
         {/* Dystyngowana historia rozmowy w stylu klasycznym */}

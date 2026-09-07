@@ -27,20 +27,61 @@ import {
   FileText,
   Bookmark,
   Lock,
-  LogOut
+  LogOut,
+  Brain,
+  Radio,
+  Activity,
+  Smile
 } from "lucide-react";
+import { MemoryConstellationGraph } from "@/components/family/MemoryConstellationGraph";
+import { ClinicalNeuroBrief } from "@/components/family/ClinicalNeuroBrief";
+import { FamilyVoiceCloner } from "@/components/family/FamilyVoiceCloner";
+import { EmergencyTelecareConnector } from "@/components/family/EmergencyTelecareConnector";
+import { 
+  getMemoryGraph, 
+  getRespiteMetrics, 
+  saveRespiteMetrics, 
+  getStoredMessages 
+} from "@/lib/storage";
+import { calculateCognitiveVitality } from "@/lib/geriatric-psychology";
+import { 
+  MemoryGraph, 
+  RespiteMetrics, 
+  CognitiveVitalityIndex, 
+  SeniorMessage,
+  CompanionVoiceType 
+} from "@/types";
+
+type GuardianTab = 
+  | "dashboard" 
+  | "constellation" 
+  | "clinical" 
+  | "voice_cloner" 
+  | "telecare" 
+  | "memories" 
+  | "settings";
 
 export default function FamilyGuardianPage() {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [profile, setProfile] = useState<SeniorProfile>(getSeniorProfile());
   const [reminiscences, setReminiscences] = useState<ReminiscenceStory[]>([]);
-  const [activeTab, setActiveTab] = useState<"dashboard" | "memories" | "settings">("dashboard");
+  const [memoryGraph, setMemoryGraph] = useState<MemoryGraph>(getMemoryGraph());
+  const [respiteMetrics, setRespiteMetrics] = useState<RespiteMetrics>(getRespiteMetrics());
+  const [messages, setMessages] = useState<SeniorMessage[]>(getStoredMessages());
+  const [cviMetrics, setCviMetrics] = useState<CognitiveVitalityIndex>(calculateCognitiveVitality(getStoredMessages()));
+  const [activeTab, setActiveTab] = useState<GuardianTab>("dashboard");
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   useEffect(() => {
-    setProfile(getSeniorProfile());
+    const loadedProfile = getSeniorProfile();
+    const loadedMsgs = getStoredMessages();
+    setProfile(loadedProfile);
     setReminiscences(getStoredReminiscences());
+    setMemoryGraph(getMemoryGraph());
+    setRespiteMetrics(getRespiteMetrics());
+    setMessages(loadedMsgs);
+    setCviMetrics(calculateCognitiveVitality(loadedMsgs));
     setSession(getAuthSession());
     setIsAuthLoading(false);
 
@@ -62,6 +103,18 @@ export default function FamilyGuardianPage() {
     setTimeout(() => setSavedSuccess(false), 3000);
   };
 
+  const handleVoiceChangedFromCloner = (newVoice: CompanionVoiceType) => {
+    const companionName = 
+      newVoice === "corka_anna" 
+        ? "Głos Córki Ani" 
+        : newVoice === "krystyna" 
+        ? "Pani Krystyna" 
+        : "Pan Stanisław";
+    const updated = { ...profile, companionVoice: newVoice, companionName };
+    setProfile(updated);
+    saveSeniorProfile(updated);
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col font-sans selection:bg-amber-200">
       <TopNav />
@@ -80,7 +133,7 @@ export default function FamilyGuardianPage() {
               <div className="flex items-center gap-2 mb-3">
                 <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-950 text-xs font-bold uppercase tracking-wider border border-amber-200">
                   <ShieldCheck className="w-4 h-4 text-amber-700" />
-                  <span>Strefa Opiekuna & Rodziny</span>
+                  <span>Strefa Opiekuna & Rodziny • BLISKIGLOS 2.0</span>
                 </div>
                 {session && (
                   <span className="text-xs text-stone-500 font-medium hidden sm:inline">
@@ -92,7 +145,7 @@ export default function FamilyGuardianPage() {
                 Pulpit Dobrostanu: {profile.name}
               </h1>
               <p className="text-stone-600 text-base sm:text-lg mt-2 max-w-2xl">
-                Codzienny podgląd samopoczucia, sesji terapeutycznych oraz ocalonych wspomnień Twojej bliskiej osoby.
+                Codzienny podgląd samopoczucia, wskaźników witalności poznawczej, ocalonych wspomnień oraz tarczy teleopiekuńczej.
               </p>
             </div>
 
@@ -115,40 +168,90 @@ export default function FamilyGuardianPage() {
             </div>
           </div>
 
-        {/* Zakładki */}
-        <div className="flex items-center gap-2 my-8 border-b border-stone-200">
+        {/* Zakładki — Mega-Innowacyjny Ekosystem Geriatryczny */}
+        <div className="flex items-center gap-2 my-8 border-b border-stone-200 overflow-x-auto pb-1">
           <button
             onClick={() => setActiveTab("dashboard")}
-            className={`px-6 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
               activeTab === "dashboard"
                 ? "border-amber-600 text-amber-950"
                 : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
             <Clock className="w-4 h-4 text-amber-600" />
-            Dziennik i Samopoczucie
+            Dziennik & Wytchnienie
           </button>
+
+          <button
+            onClick={() => setActiveTab("constellation")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "constellation"
+                ? "border-amber-600 text-amber-950"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-amber-500" />
+            Konstelacja Wspomnień
+          </button>
+
+          <button
+            onClick={() => setActiveTab("clinical")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "clinical"
+                ? "border-blue-600 text-blue-950"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <Brain className="w-4 h-4 text-blue-600" />
+            Raport Lekarza (CVI)
+          </button>
+
+          <button
+            onClick={() => setActiveTab("voice_cloner")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "voice_cloner"
+                ? "border-rose-600 text-rose-950"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <Heart className="w-4 h-4 text-rose-600" />
+            Głos Córki (Kotwica)
+          </button>
+
+          <button
+            onClick={() => setActiveTab("telecare")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "telecare"
+                ? "border-stone-900 text-stone-950"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <Radio className="w-4 h-4 text-emerald-600" />
+            Teleopieka & PZU
+          </button>
+
           <button
             onClick={() => setActiveTab("memories")}
-            className={`px-6 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
               activeTab === "memories"
                 ? "border-amber-600 text-amber-950"
                 : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
             <BookOpen className="w-4 h-4 text-amber-600" />
-            Kronika Wspomnień ({reminiscences.length})
+            Kronika ({reminiscences.length})
           </button>
+
           <button
             onClick={() => setActiveTab("settings")}
-            className={`px-6 py-3 text-base font-bold border-b-2 transition-all flex items-center gap-2 ${
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
               activeTab === "settings"
                 ? "border-amber-600 text-amber-950"
                 : "border-transparent text-stone-500 hover:text-stone-900"
             }`}
           >
             <Settings className="w-4 h-4 text-stone-500" />
-            Ustawienia & Subskrypcja
+            Ustawienia
           </button>
         </div>
 
@@ -293,10 +396,94 @@ export default function FamilyGuardianPage() {
                 </div>
               </div>
             </div>
+
+            {/* Wytchnienie Opiekuna (Standard Innowacji Społecznych FERS & Skala Zarita) */}
+            <div className="bg-white p-6 sm:p-8 rounded-3xl border border-stone-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-stone-100">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-rose-100 flex items-center justify-center shrink-0">
+                    <Heart className="w-6 h-6 text-rose-600 fill-rose-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-serif text-2xl font-bold text-stone-950">
+                      Miernik Wytchnienia Opiekuna (FERS Impact & Skala Zarita)
+                    </h3>
+                    <p className="text-xs text-stone-500">
+                      Opiekun to „drugi pacjent” — asystent zapewnia realną przerwę od ciągłego czuwania.
+                    </p>
+                  </div>
+                </div>
+                <span className="px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+                  Poziom Stresu: Bezpieczny (-{respiteMetrics.stressReductionPercent}%)
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6">
+                <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200">
+                  <span className="text-xs text-stone-500 uppercase font-bold block">Czas wytchnienia w tygodniu</span>
+                  <span className="font-serif text-3xl font-bold text-stone-900 mt-1 block">
+                    {respiteMetrics.weeklyRespiteHours} godzin
+                  </span>
+                  <span className="text-xs text-emerald-700 font-semibold">Tyle bezpiecznego czasu zyskałaś dla siebie</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200">
+                  <span className="text-xs text-stone-500 uppercase font-bold block">Skala Wypalenia Zarita (ZBI-12)</span>
+                  <span className="font-serif text-3xl font-bold text-stone-900 mt-1 block">
+                    {respiteMetrics.zaritBurdenScore} / 48
+                  </span>
+                  <span className="text-xs text-stone-500">Przed wdrożeniem: {respiteMetrics.previousZaritScore} / 48 (strefa kryzysowa)</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-stone-50 border border-stone-200">
+                  <span className="text-xs text-stone-500 uppercase font-bold block">Spadek napięcia psychicznego</span>
+                  <span className="font-serif text-3xl font-bold text-emerald-600 mt-1 block">
+                    - {respiteMetrics.stressReductionPercent}%
+                  </span>
+                  <span className="text-xs text-emerald-700 font-semibold">Twardy wskaźnik innowacji FERS</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* 2. ZAKŁADKA KRONIKA WSPOMNIEŃ (Reminiscence Vault) */}
+        {/* 2. ZAKŁADKA KONSTELACJA WSPOMNIEŃ (GRAF WIEDZY) */}
+        {activeTab === "constellation" && (
+          <div className="space-y-6">
+            <MemoryConstellationGraph graph={memoryGraph} />
+          </div>
+        )}
+
+        {/* 3. ZAKŁADKA KLINICZNY RAPORT LEKARZA */}
+        {activeTab === "clinical" && (
+          <div className="space-y-6">
+            <ClinicalNeuroBrief
+              profile={profile}
+              cvi={cviMetrics}
+              respite={respiteMetrics}
+              messages={messages}
+            />
+          </div>
+        )}
+
+        {/* 4. ZAKŁADKA GŁOS CÓRKI (BEZPIECZNA KOTWICA) */}
+        {activeTab === "voice_cloner" && (
+          <div className="space-y-6">
+            <FamilyVoiceCloner
+              profile={profile}
+              onVoiceChanged={handleVoiceChangedFromCloner}
+            />
+          </div>
+        )}
+
+        {/* 5. ZAKŁADKA MOST ALARMOWY TELEOPIEKI (PZU / MOPS) */}
+        {activeTab === "telecare" && (
+          <div className="space-y-6">
+            <EmergencyTelecareConnector profile={profile} />
+          </div>
+        )}
+
+        {/* 6. ZAKŁADKA KRONIKA WSPOMNIEŃ (Reminiscence Vault) */}
         {activeTab === "memories" && (
           <div className="space-y-8">
             {/* Banner z fotografią dłoni pokoleń */}
