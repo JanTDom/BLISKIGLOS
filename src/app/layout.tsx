@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import "./globals.css";
-import { AppAuthGate } from "@/components/auth/AppAuthGate";
-import { AuthSession } from "@/types";
 
 export const metadata: Metadata = {
   title: "BliskiGłos.pl — Terapeutyczny Towarzysz Seniora w Samotności",
@@ -24,24 +21,11 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  let initialSession: AuthSession | null = null;
-  try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get("bliskiglos_session");
-    if (sessionCookie?.value) {
-      const parsed = JSON.parse(sessionCookie.value);
-      if (parsed.expiresAt && parsed.expiresAt > Date.now()) {
-        initialSession = parsed;
-      }
-    }
-  } catch (e) {
-    // Brak aktywnej sesji
-  }
 
   return (
     <html lang="pl">
@@ -55,9 +39,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="bg-[#FAF7F2] text-stone-900 min-h-screen antialiased font-sans">
-        <AppAuthGate initialSession={initialSession}>
-          {children}
-        </AppAuthGate>
+        {children}
       </body>
     </html>
   );

@@ -722,36 +722,36 @@ export default function FamilyGuardianPage() {
               </form>
             </div>
 
-            {/* Karta subskrypcji */}
-            <div className="bg-stone-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col justify-between">
+            {/* Karta statusu programu pilotażowego */}
+            <div className="bg-stone-900 text-white p-6 sm:p-8 rounded-3xl shadow-xl flex flex-col justify-between border border-emerald-500/20">
               <div>
-                <div className="flex items-center gap-2 text-amber-400 text-xs uppercase font-bold tracking-wider mb-2">
-                  <CreditCard className="w-4 h-4" />
-                  Aktywna Subskrypcja
+                <div className="flex items-center gap-2 text-emerald-400 text-xs uppercase font-bold tracking-wider mb-2">
+                  <ShieldCheck className="w-4 h-4" />
+                  Status: Program Bezpłatnego Wsparcia
                 </div>
                 <h4 className="font-serif text-2xl font-bold">
-                  Pakiet Troskliwa Rodzina
+                  Pilotaż Innowacji Społecznej B+R
                 </h4>
                 <p className="text-stone-300 text-sm mt-2">
-                  Nielimitowane rozmowy głosowe AI dla seniora + codzienne powiadomienia i kronika wspomnień.
+                  Rozwiązanie finansowane w ramach projektów wsparcia geriatrycznego (NCBR / FERS / PFRON). Pełen dostęp bez opłat.
                 </p>
 
-                <div className="mt-6 p-5 rounded-2xl bg-stone-800 border border-stone-700">
-                  <span className="text-4xl font-serif font-bold text-amber-400">89 zł</span>
-                  <span className="text-stone-400 text-sm"> / miesiąc</span>
-                  <p className="text-xs text-emerald-400 font-semibold mt-3 flex items-center gap-1.5">
-                    <CheckCircle2 className="w-4 h-4" />
-                    Kolejne odnowienie: 3 października 2026
+                <div className="mt-6 p-5 rounded-2xl bg-stone-800/80 border border-emerald-500/30">
+                  <span className="text-3xl font-serif font-bold text-emerald-400">0 zł</span>
+                  <span className="text-stone-400 text-sm"> / bezterminowo dla uczestników</span>
+                  <p className="text-xs text-emerald-300 font-semibold mt-3 flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    Wszystkie moduły i telemetria odblokowane
                   </p>
                 </div>
               </div>
 
               <div className="mt-8 pt-6 border-t border-stone-800">
                 <Link
-                  href="/cennik"
+                  href="/senior"
                   className="w-full py-3.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-bold text-center block text-sm transition-all shadow-md"
                 >
-                  Zmień plan lub zarządzaj płatnością
+                  Uruchom stanowisko Seniora
                 </Link>
               </div>
             </div>

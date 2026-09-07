@@ -21,7 +21,10 @@ import {
   Clock,
   Flame,
   Activity,
-  Award
+  Award,
+  Brain,
+  FileText,
+  Share2
 } from "lucide-react";
 
 export default function LandingHomePage() {
@@ -478,7 +481,108 @@ export default function LandingHomePage() {
         </div>
       </section>
 
-      {/* 6. CALL TO ACTION DLA RODZINY */}
+      {/* 6. PIONIERSKIE INNOWACJE B+R I STANDARD KLINICZNY (NCBR, FERS, PFRON) */}
+      <section className="py-20 bg-stone-900 text-white relative overflow-hidden border-t border-stone-800">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-widest border border-amber-500/40 mb-4">
+              <Sparkles className="w-4 h-4 text-amber-400" />
+              Standard Badań i Rozwoju (B+R) • Innowacje Społeczne
+            </div>
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold leading-tight">
+              Pionierskie technologie w służbie godności seniora
+            </h2>
+            <p className="text-stone-300 mt-4 text-lg sm:text-xl leading-relaxed">
+              BliskiGłos łączy najnowsze odkrycia psychogeriatrii z przetwarzaniem mowy w czasie rzeczywistym. Narzędzia stworzone dla rodzin, geriatrów i instytucji opiekuńczych.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 1. Konstelacja Wspomnień */}
+            <div className="p-6 rounded-3xl bg-stone-800/80 border border-stone-700/80 flex flex-col justify-between hover:border-amber-500/50 transition-all">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-amber-500/20 flex items-center justify-center text-amber-400 mb-4">
+                  <Share2 className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold text-white mb-2">
+                  Konstelacja Wspomnień
+                </h3>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Dynamiczny graf wiedzy łączący wspomnienia, bliskich, ukochane miejsca i kotwice zmysłowe (np. zapach szarlotki z 1968 r.). AI automatycznie odnajduje powiązania między rozmowami.
+                </p>
+              </div>
+              <div className="text-xs text-amber-400 font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4" /> Dostępne w Portalu Rodziny
+              </div>
+            </div>
+
+            {/* 2. Kliniczny Raport Neuro-Brief & CVI */}
+            <div className="p-6 rounded-3xl bg-stone-800/80 border border-stone-700/80 flex flex-col justify-between hover:border-amber-500/50 transition-all">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 flex items-center justify-center text-emerald-400 mb-4">
+                  <FileText className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold text-white mb-2">
+                  Kliniczny Neuro-Brief & CVI
+                </h3>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Wskaźnik Witalności Poznawczej (CVI) oparty o akustyczne biomarkery mowy (pauzy hesitated, fluktuacje tonu F0) oraz stosunek rzeczowników do zaimków. Gotowy wydruk PDF na wizytę u neurologa.
+                </p>
+              </div>
+              <div className="text-xs text-emerald-400 font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4" /> Zgodność z wytycznymi geriatrycznymi
+              </div>
+            </div>
+
+            {/* 3. Bezpieczna Kotwica Głosu Bliskiej Osoby */}
+            <div className="p-6 rounded-3xl bg-stone-800/80 border border-stone-700/80 flex flex-col justify-between hover:border-amber-500/50 transition-all">
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4">
+                  <Mic className="w-6 h-6" />
+                </div>
+                <h3 className="font-serif text-2xl font-bold text-white mb-2">
+                  Bezpieczna Kotwica Głosu
+                </h3>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Możliwość syntezy głosu córki lub syna z rygorystycznym filtrem bioetycznym Naomi Feil — AI nigdy nie imituje nieobecnego bliskiego w sposób wprowadzający w błąd, lecz przynosi kojące wsparcie.
+                </p>
+              </div>
+              <div className="text-xs text-indigo-400 font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4" /> Etyczne klonowanie ElevenLabs
+              </div>
+            </div>
+          </div>
+
+          {/* Dolny pasek teleopieki i tarczy sundowning */}
+          <div className="mt-8 p-6 rounded-3xl bg-stone-800/50 border border-stone-700/50 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-orange-500/20 flex items-center justify-center text-orange-400 shrink-0">
+                <Sun className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-base">Tarcza Zmierzchowa 1800K</h4>
+                <p className="text-stone-300 text-xs mt-1 leading-relaxed">
+                  Automatyczny tryb ciepłego bursztynowego spektrum światła, redukujący niepokój wieczorny i zaburzenia rytmu dobowego (Sundowning Syndrome).
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-xl bg-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+                <Activity className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-white text-base">Konektor Teleopieki B2G / PZU</h4>
+                <p className="text-stone-300 text-xs mt-1 leading-relaxed">
+                  Integracja z centrami teleopieki gminnej i ubezpieczycieli. Szybka dyspozycja pomocy w sytuacjach nagłych z pełną anonimizacją danych medycznych (PII Scrubber).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. CALL TO ACTION DLA RODZINY */}
       <section className="py-20 bg-stone-950 text-white relative overflow-hidden">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 text-amber-300 text-xs font-bold uppercase tracking-widest border border-amber-500/30 mb-6">
@@ -493,15 +597,15 @@ export default function LandingHomePage() {
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/senior"
-              className="w-full sm:w-auto px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-lg transition-all shadow-xl shadow-amber-500/20"
+              className="w-full sm:w-auto px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-lg transition-all shadow-xl shadow-amber-500/20 flex items-center justify-center gap-2"
             >
-              Wypróbuj rozmowę z Seniorem na żywo
+              Włącz rozmowę z Seniorem na żywo
             </Link>
             <Link
-              href="/cennik"
+              href="/opiekun"
               className="w-full sm:w-auto px-8 py-4 rounded-full bg-stone-800 hover:bg-stone-700 text-white font-bold text-lg transition-all border border-stone-700"
             >
-              Zobacz pakiety opiekuńcze od 59 zł/mc
+              Otwórz Portal Opiekuna i Rodziny
             </Link>
           </div>
         </div>
@@ -519,7 +623,6 @@ export default function LandingHomePage() {
           <div className="mt-6 flex items-center justify-center gap-6 text-xs text-stone-400">
             <Link href="/senior" className="hover:text-amber-400 transition-colors">Tryb Seniora</Link>
             <Link href="/opiekun" className="hover:text-amber-400 transition-colors">Portal Rodziny</Link>
-            <Link href="/cennik" className="hover:text-amber-400 transition-colors">Cennik</Link>
             <span>© {new Date().getFullYear()} BLISKIGLOS. Wszelkie prawa zastrzeżone.</span>
           </div>
         </div>
