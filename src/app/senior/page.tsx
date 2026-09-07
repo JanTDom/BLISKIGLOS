@@ -73,9 +73,21 @@ export default function SeniorPage() {
   useEffect(() => {
     const loadedProfile = getSeniorProfile();
     setProfile(loadedProfile);
-    profileRef.current = loadedProfile;
-    setSundowningMode(Boolean(loadedProfile.sundowningShieldActive));
-    setKioskMode(Boolean(loadedProfile.kioskModeEnabled));
+    let sundowningInitial = Boolean(loadedProfile.sundowningShieldActive);
+    let kioskInitial = Boolean(loadedProfile.kioskModeEnabled);
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("sundowning") === "1" || params.get("sundowning") === "true") {
+        sundowningInitial = true;
+      }
+      if (params.get("kiosk") === "1" || params.get("kiosk") === "true") {
+        kioskInitial = true;
+      }
+    }
+
+    setSundowningMode(sundowningInitial);
+    setKioskMode(kioskInitial);
 
     const stored = getStoredMessages();
     if (stored.length > 0) {

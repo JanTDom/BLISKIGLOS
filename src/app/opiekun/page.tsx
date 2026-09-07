@@ -82,8 +82,36 @@ export default function FamilyGuardianPage() {
     setRespiteMetrics(getRespiteMetrics());
     setMessages(loadedMsgs);
     setCviMetrics(calculateCognitiveVitality(loadedMsgs));
-    setSession(getAuthSession());
+
+    // Odczyt sesji lub automatyczny dostęp do podglądu demonstracyjnego (B+R)
+    const existing = getAuthSession();
+    if (existing) {
+      setSession(existing);
+    } else {
+      const demoSession: AuthSession = {
+        user: {
+          email: "opiekun.rodziny@bliskiglos.pl",
+          name: "Opiekun Rodzinny (Dostęp Pokazowy)",
+          role: "guardian",
+        },
+        token: "demo_guest_session",
+        expiresAt: Date.now() + 1000 * 60 * 60 * 24 * 14,
+      };
+      setSession(demoSession);
+    }
     setIsAuthLoading(false);
+
+    // Odczyt wybranej zakładki z adresu URL (np. ?tab=constellation)
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab") as GuardianTab | null;
+      if (
+        tabParam &&
+        ["dashboard", "constellation", "clinical", "voice_cloner", "telecare", "memories", "settings"].includes(tabParam)
+      ) {
+        setActiveTab(tabParam);
+      }
+    }
 
     const unsub = onAuthChange((newSession) => {
       setSession(newSession);
