@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { buildSeniorCompanionSystemPrompt, detectSeniorCrisis } from "@/lib/geriatric-psychology";
+import { 
+  buildSeniorCompanionSystemPrompt, 
+  detectSeniorCrisis, 
+  sanitizeMedicalPII,
+  analyzeSpeechBiomarkers 
+} from "@/lib/geriatric-psychology";
 import { SeniorProfile, ChatApiSeniorResponse } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +39,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Brak wiadomości" }, { status: 400 });
     }
 
+    // 1. Anonimizacja danych medycznych PII (RODO / Standard Medyczny)
+    const sanitizedMessage = sanitizeMedicalPII(message);
+
+    // 2. Analiza biomarkerów mowy (hesitacja, afekt, wskaźnik leksykalny)
+    const biomarkers = analyzeSpeechBiomarkers(message);
+
     const seniorProfile: SeniorProfile = profile || {
       id: "demo_senior",
       name: "Pani Maria",
@@ -51,19 +62,21 @@ export async function POST(req: NextRequest) {
       },
       subscriptionTier: "family_peace",
       subscriptionActive: true,
-      streakDays: 14
+      streakDays: 14,
+      kioskModeEnabled: false,
+      sundowningShieldActive: false
     };
 
-    // 1. Sprawdzenie kryzysowe (somatyczne i psychiczne)
+    // 3. Sprawdzenie kryzysowe (somatyczne i psychiczne)
     const crisisCheck = detectSeniorCrisis(message);
 
-    // 2. Budowa promptu geriatryczno-terapeutycznego
+    // 4. Budowa promptu geriatryczno-terapeutycznego
     const systemPrompt = buildSeniorCompanionSystemPrompt(seniorProfile);
 
-    // 3. Kontekst ostatnich wypowiedzi (maksymalnie 6 ostatnich wiadomości, by nie przeładowywać)
+    // 5. Kontekst ostatnich wypowiedzi (maksymalnie 6 ostatnich wiadomości z anonimizacją)
     const formattedHistory = (history || []).slice(-6).map((m: any) => ({
       role: m.sender === "senior" ? "user" : "assistant",
-      content: m.text,
+      content: sanitizeMedicalPII(m.text),
     }));
 
     const responseSchemaPrompt = `
@@ -75,16 +88,35 @@ ODPOWIEDZ WYŁĄCZNIE W FORMACIE JSON o następującej strukturze:
     "title": "Krótki tytuł wspomnienia (np. Zapach chleba w rodzinnym domu)",
     "story": "Co dokładnie senior opowiedział o swojej przeszłości",
     "decadeOrEra": "np. Lata 50. / Dzieciństwo na wsi",
-    "emotion": "Wzruszenie i radość"
+    "emotion": "Wzruszenie i radość",
+    "sensoryAnchors": ["zapach chleba", "piec kaflowy"]
   },
+  "extractedGraphNodes": [
+    {
+      "id": "node_unikalny_id",
+      "label": "Nazwa osoby/miejsca/kotwicy (np. Mąż Jan, Park Saski)",
+      "type": "osoba" | "miejsce" | "kotwica_sensoryczna" | "wydarzenie" | "emocja",
+      "decadeOrEra": "np. 1965 rok",
+      "importance": 4,
+      "details": "Krótki opis faktu ocalonego z pamięci"
+    }
+  ],
+  "extractedGraphEdges": [
+    {
+      "source": "id_wezla_1",
+      "target": "id_wezla_2",
+      "relation": "np. spacerowała z, kochała"
+    }
+  ],
   "healthAlert": null LUB "Krótki opis jeśli senior wspomniał o złym samopoczuciu, bólu lub osłabieniu"
 }
+Jeśli w wypowiedzi nie pojawiły się żadne fakty biograficzne, tablice "extractedGraphNodes" i "extractedGraphEdges" pozostaw puste: [].
 `;
 
     const openAiMessages = [
       { role: "system", content: systemPrompt + "\n\n" + responseSchemaPrompt },
       ...formattedHistory,
-      { role: "user", content: message },
+      { role: "user", content: sanitizedMessage },
     ];
 
     const res = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -129,6 +161,9 @@ ODPOWIEDZ WYŁĄCZNIE W FORMACIE JSON o następującej strukturze:
       crisisFlag: crisisCheck.isCrisis,
       crisisReason: crisisCheck.reason,
       extractedReminiscence: parsed.extractedReminiscence || null,
+      extractedGraphNodes: parsed.extractedGraphNodes || [],
+      extractedGraphEdges: parsed.extractedGraphEdges || [],
+      biomarkers,
       healthAlert: parsed.healthAlert || (crisisCheck.isCrisis ? crisisCheck.reason : null),
     };
 
@@ -138,3 +173,4 @@ ODPOWIEDZ WYŁĄCZNIE W FORMACIE JSON o następującej strukturze:
     return NextResponse.json({ error: err.message || "Błąd wewnętrzny serwera" }, { status: 500 });
   }
 }
+

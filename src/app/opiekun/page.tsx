@@ -5,6 +5,9 @@ import Link from "next/link";
 import { TopNav } from "@/components/navigation/TopNav";
 import { getSeniorProfile, saveSeniorProfile, getStoredReminiscences } from "@/lib/storage";
 import { SeniorProfile, ReminiscenceStory, FamilyReportDay } from "@/types";
+import { getAuthSession, logout, onAuthChange } from "@/lib/auth";
+import { LoginForm } from "@/components/auth/LoginForm";
+import { AuthSession } from "@/types";
 import { 
   Heart, 
   Sparkles, 
@@ -22,10 +25,14 @@ import {
   Sun,
   Volume2,
   FileText,
-  Bookmark
+  Bookmark,
+  Lock,
+  LogOut
 } from "lucide-react";
 
 export default function FamilyGuardianPage() {
+  const [session, setSession] = useState<AuthSession | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [profile, setProfile] = useState<SeniorProfile>(getSeniorProfile());
   const [reminiscences, setReminiscences] = useState<ReminiscenceStory[]>([]);
   const [activeTab, setActiveTab] = useState<"dashboard" | "memories" | "settings">("dashboard");
@@ -34,7 +41,19 @@ export default function FamilyGuardianPage() {
   useEffect(() => {
     setProfile(getSeniorProfile());
     setReminiscences(getStoredReminiscences());
+    setSession(getAuthSession());
+    setIsAuthLoading(false);
+
+    const unsub = onAuthChange((newSession) => {
+      setSession(newSession);
+    });
+    return () => unsub();
   }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    setSession(null);
+  };
 
   const handleUpdateProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,32 +66,54 @@ export default function FamilyGuardianPage() {
     <div className="min-h-screen bg-[#FAF7F2] text-stone-900 flex flex-col font-sans selection:bg-amber-200">
       <TopNav />
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
-        {/* Nagłówek Portalu Opiekuna */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-amber-900/10">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-950 text-xs font-bold uppercase tracking-wider mb-3 border border-amber-200">
-              <ShieldCheck className="w-4 h-4 text-amber-700" />
-              <span>Strefa Opiekuna & Rodziny</span>
+      {!isAuthLoading && !session ? (
+        <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-12 sm:py-16 flex flex-col items-center justify-center animate-in fade-in">
+          <div className="w-full">
+            <LoginForm onSuccess={(newSession) => setSession(newSession)} />
+          </div>
+        </main>
+      ) : (
+        <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-8 animate-in fade-in">
+          {/* Nagłówek Portalu Opiekuna */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b border-amber-900/10">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-100 text-amber-950 text-xs font-bold uppercase tracking-wider border border-amber-200">
+                  <ShieldCheck className="w-4 h-4 text-amber-700" />
+                  <span>Strefa Opiekuna & Rodziny</span>
+                </div>
+                {session && (
+                  <span className="text-xs text-stone-500 font-medium hidden sm:inline">
+                    Zalogowano: <strong>{session.user.email}</strong>
+                  </span>
+                )}
+              </div>
+              <h1 className="font-serif text-3xl sm:text-5xl font-bold text-stone-950 tracking-tight">
+                Pulpit Dobrostanu: {profile.name}
+              </h1>
+              <p className="text-stone-600 text-base sm:text-lg mt-2 max-w-2xl">
+                Codzienny podgląd samopoczucia, sesji terapeutycznych oraz ocalonych wspomnień Twojej bliskiej osoby.
+              </p>
             </div>
-            <h1 className="font-serif text-3xl sm:text-5xl font-bold text-stone-950 tracking-tight">
-              Pulpit Dobrostanu: {profile.name}
-            </h1>
-            <p className="text-stone-600 text-base sm:text-lg mt-2 max-w-2xl">
-              Codzienny podgląd samopoczucia, sesji terapeutycznych oraz ocalonych wspomnień Twojej bliskiej osoby.
-            </p>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <Link
-              href="/senior"
-              className="px-6 py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm shadow-md shadow-amber-600/20 transition-all flex items-center gap-2"
-            >
-              <span>Otwórz widok Seniora</span>
-              <ArrowRight className="w-4 h-4" />
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href="/senior"
+                className="px-6 py-3 rounded-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm shadow-md shadow-amber-600/20 transition-all flex items-center gap-2"
+              >
+                <span>Otwórz widok Seniora</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="p-3 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-600 hover:text-rose-700 transition-colors"
+                title="Wyloguj się z programu"
+                aria-label="Wyloguj się"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-        </div>
 
         {/* Zakładki */}
         <div className="flex items-center gap-2 my-8 border-b border-stone-200">
@@ -530,6 +571,7 @@ export default function FamilyGuardianPage() {
           </div>
         )}
       </main>
+      )}
     </div>
   );
 }

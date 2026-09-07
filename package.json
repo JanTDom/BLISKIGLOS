@@ -1,7 +1,7 @@
 {
   "name": "bliskiglos",
   "version": "1.0.0",
-  "description": "BLISKIGLOS \u2014 Terapeutyczny Towarzysz Seniora w Samotno\u015bci i Demencji",
+  "description": "BLISKIGLOS — Terapeutyczny Towarzysz Seniora w Samotności i Demencji",
   "main": "index.js",
   "scripts": {
     "dev": "next dev",
@@ -36,6 +36,7 @@
     "react-dom": "^19.2.8",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^3.4.17",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "zod": "^4.5.4"
   }
 }
