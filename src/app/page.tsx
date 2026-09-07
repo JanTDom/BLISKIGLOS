@@ -24,7 +24,10 @@ import {
   Award,
   Brain,
   FileText,
-  Share2
+  Share2,
+  Radio,
+  Building2,
+  HeartHandshake
 } from "lucide-react";
 
 export default function LandingHomePage() {
@@ -543,18 +546,138 @@ export default function LandingHomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* 1. Konstelacja Wspomnień */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* 1. Laboratorium Akustyczne Biomarkerów Mowy */}
             <Link
-              href="/opiekun?tab=constellation"
+              href="/opiekun?tab=voice_lab"
               className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-amber-400/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 transition-all flex flex-col justify-between"
             >
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/20 group-hover:bg-amber-500/30 flex items-center justify-center text-amber-400 mb-4 transition-colors">
-                  <Share2 className="w-6 h-6" />
+                  <Activity className="w-6 h-6" />
                 </div>
                 <div className="min-h-[3.25rem] flex items-center mb-2">
                   <h3 className="font-serif text-2xl font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
+                    Biomarkery Mowy &amp;&nbsp;CVI
+                  </h3>
+                </div>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Spektrogram FFT na&nbsp;żywo (0–4000&nbsp;Hz), mikro-drżenia strun głosowych (Jitter), opóźnienia pauz (Hesitation Latency) i&nbsp;wskaźnik witalności poznawczej CVI. Wczesna detekcja MCI i&nbsp;demencji.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-amber-400 group-hover:text-amber-300">
+                <span className="flex items-center gap-1.5"><Activity className="w-4 h-4" /> Uruchom Analizę Mowy Live</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            {/* 2. Retro-Radio Lampowe 1965 */}
+            <Link
+              href="/senior?retro=1"
+              className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-amber-500/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-amber-500/10 transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-amber-600/20 group-hover:bg-amber-600/30 flex items-center justify-center text-amber-300 mb-4 transition-colors">
+                  <Radio className="w-6 h-6" />
+                </div>
+                <div className="min-h-[3.25rem] flex items-center mb-2">
+                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-amber-200 transition-colors leading-snug">
+                    Retro-Radio Lampowe 1965
+                  </h3>
+                </div>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Dedykowany interfejs w&nbsp;stylu odbiornika lampowego z&nbsp;„magicznym okiem” (6E5S) i&nbsp;mosiężnymi pokrętłami. Całkowita eliminacja bariery dotykowej dla&nbsp;seniorów z&nbsp;chorobą Alzheimera (PFRON TRL 7).
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-amber-300 group-hover:text-amber-200">
+                <span className="flex items-center gap-1.5"><Radio className="w-4 h-4" /> Włącz Odbiornik Radiowy</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            {/* 3. Pulpit Koordynatora Gminnego MOPS / DPS */}
+            <Link
+              href="/opiekun?tab=gmina"
+              className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-sky-400/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-sky-500/10 transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-sky-500/20 group-hover:bg-sky-500/30 flex items-center justify-center text-sky-400 mb-4 transition-colors">
+                  <Building2 className="w-6 h-6" />
+                </div>
+                <div className="min-h-[3.25rem] flex items-center mb-2">
+                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-sky-300 transition-colors leading-snug">
+                    Koordynator Gminny MOPS
+                  </h3>
+                </div>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Pulpit B2G dla&nbsp;ośrodków pomocy społecznej: triage 48&nbsp;podopiecznych, detekcja 48h izolacji, dyspozycja wizyt i&nbsp;kalkulator oszczędności deinstytucjonalizacji (4,32&nbsp;mln&nbsp;zł/rok na&nbsp;gminę).
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-sky-400 group-hover:text-sky-300">
+                <span className="flex items-center gap-1.5"><Building2 className="w-4 h-4" /> Otwórz Pulpit Gminny B2G</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            {/* 4. Indeks Wypalenia Opiekuna Zarit (ZBI-12) */}
+            <Link
+              href="/opiekun?tab=zarit"
+              className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-rose-400/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-rose-500/10 transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-rose-500/20 group-hover:bg-rose-500/30 flex items-center justify-center text-rose-400 mb-4 transition-colors">
+                  <HeartHandshake className="w-6 h-6" />
+                </div>
+                <div className="min-h-[3.25rem] flex items-center mb-2">
+                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-rose-300 transition-colors leading-snug">
+                    Skala Wypalenia Zarit
+                  </h3>
+                </div>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Walidowany kwestionariusz Zarit Burden Interview (12 pytań), natychmiastowa punktacja 0–48 pkt, profil przeciążenia psychicznego oraz automatyczny dobór bonów opieki wytchnieniowej.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-rose-400 group-hover:text-rose-300">
+                <span className="flex items-center gap-1.5"><HeartHandshake className="w-4 h-4" /> Sprawdź Poziom Wypalenia (ZBI-12)</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            {/* 5. Generatywna Kronika Życia & Audiobook */}
+            <Link
+              href="/opiekun?tab=life_chronicle"
+              className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-emerald-400/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-emerald-500/10 transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 group-hover:bg-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 transition-colors">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <div className="min-h-[3.25rem] flex items-center mb-2">
+                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug">
+                    Kronika Życia &amp;&nbsp;Audiobook
+                  </h3>
+                </div>
+                <p className="text-stone-300 text-sm leading-relaxed mb-4">
+                  Metoda Terapii Reminiscencyjnej dr.&nbsp;Butlera. Rozmowy seniora kompilowane w&nbsp;rozdziały biograficzne (1945–1985) z&nbsp;odsłuchem audio i&nbsp;gotowym składem do&nbsp;książkowego wydruku.
+                </p>
+              </div>
+              <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-emerald-400 group-hover:text-emerald-300">
+                <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4" /> Zobacz Rozdziały Kroniki</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </Link>
+
+            {/* 6. Konstelacja Wspomnień */}
+            <Link
+              href="/opiekun?tab=constellation"
+              className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-indigo-400/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-indigo-500/10 transition-all flex flex-col justify-between"
+            >
+              <div>
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 group-hover:bg-indigo-500/30 flex items-center justify-center text-indigo-400 mb-4 transition-colors">
+                  <Share2 className="w-6 h-6" />
+                </div>
+                <div className="min-h-[3.25rem] flex items-center mb-2">
+                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
                     Konstelacja Wspomnień
                   </h3>
                 </div>
@@ -562,103 +685,34 @@ export default function LandingHomePage() {
                   Dynamiczny graf wiedzy łączący wspomnienia, bliskich, ukochane miejsca i&nbsp;kotwice zmysłowe (np. zapach szarlotki z&nbsp;1968&nbsp;r.). AI automatycznie odnajduje powiązania między rozmowami.
                 </p>
               </div>
-              <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-amber-400 group-hover:text-amber-300">
-                <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> Otwórz interaktywną Konstelację</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* 2. Kliniczny Raport Neuro-Brief & CVI */}
-            <Link
-              href="/opiekun?tab=clinical"
-              className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-emerald-400/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-emerald-500/10 transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 group-hover:bg-emerald-500/30 flex items-center justify-center text-emerald-400 mb-4 transition-colors">
-                  <FileText className="w-6 h-6" />
-                </div>
-                <div className="min-h-[3.25rem] flex items-center mb-2">
-                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-emerald-300 transition-colors leading-snug">
-                    Kliniczny Neuro-Brief &amp;&nbsp;CVI
-                  </h3>
-                </div>
-                <p className="text-stone-300 text-sm leading-relaxed mb-4">
-                  Wskaźnik Witalności Poznawczej (CVI) oparty o&nbsp;akustyczne biomarkery mowy (pauzy hesitated, fluktuacje tonu F0) oraz stosunek rzeczowników do&nbsp;zaimków. Gotowy wydruk PDF na&nbsp;wizytę u&nbsp;neurologa.
-                </p>
-              </div>
-              <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-emerald-400 group-hover:text-emerald-300">
-                <span className="flex items-center gap-1.5"><FileText className="w-4 h-4" /> Generuj Raport CVI dla Lekarza</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </Link>
-
-            {/* 3. Bezpieczna Kotwica Głosu Bliskiej Osoby */}
-            <Link
-              href="/opiekun?tab=voice_cloner"
-              className="group p-7 rounded-3xl bg-stone-800/90 border border-stone-700/90 hover:border-indigo-400/90 hover:bg-stone-800 shadow-xl hover:shadow-2xl hover:shadow-indigo-500/10 transition-all flex flex-col justify-between"
-            >
-              <div>
-                <div className="w-12 h-12 rounded-2xl bg-indigo-500/20 group-hover:bg-indigo-500/30 flex items-center justify-center text-indigo-400 mb-4 transition-colors">
-                  <Mic className="w-6 h-6" />
-                </div>
-                <div className="min-h-[3.25rem] flex items-center mb-2">
-                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-indigo-300 transition-colors leading-snug">
-                    Bezpieczna Kotwica Głosu
-                  </h3>
-                </div>
-                <p className="text-stone-300 text-sm leading-relaxed mb-4">
-                  Możliwość syntezy głosu córki lub syna z&nbsp;rygorystycznym filtrem bioetycznym Naomi Feil — AI nigdy nie imituje nieobecnego bliskiego w&nbsp;sposób wprowadzający w&nbsp;błąd, lecz przynosi kojące wsparcie.
-                </p>
-              </div>
               <div className="mt-6 pt-4 border-t border-stone-700/80 flex items-center justify-between text-xs font-bold text-indigo-400 group-hover:text-indigo-300">
-                <span className="flex items-center gap-1.5"><Mic className="w-4 h-4" /> Przetestuj Głos Córki Ani</span>
+                <span className="flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> Otwórz Graf Wiedzy</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </Link>
           </div>
 
-          {/* Dolny pasek teleopieki i tarczy sundowning */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Główny baner Dossier B+R dla Ekspertów Grantowych (NCBR / FERS / PFRON / PZU) */}
+          <div className="mt-10 p-8 rounded-3xl bg-gradient-to-r from-stone-800 via-stone-800 to-amber-950/40 border border-amber-500/40 shadow-2xl flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 text-xs font-bold uppercase tracking-widest border border-amber-500/30 mb-3">
+                <FileText className="w-3.5 h-3.5" />
+                Dla Ekspertów i&nbsp;Komitetów Naukowych
+              </div>
+              <h3 className="font-serif text-2xl sm:text-3xl font-bold text-white [text-wrap:balance]">
+                Dossier Badań i&nbsp;Rozwoju (TRL 4–8 &amp; MDR SaMD)
+              </h3>
+              <p className="text-stone-300 text-sm mt-2 leading-relaxed">
+                Pełna dokumentacja badawcza: 4-letnia mapa drogowa TRL, protokół randomizowanego badania klinicznego RCT (n=120, CVI vs MMSE), certyfikacja wyrobu medycznego oprogramowania (MDR Klasa I/IIa) oraz matryca naborów grantowych NCBR, FERS, PFRON i&nbsp;PZU.
+              </p>
+            </div>
             <Link
-              href="/senior?sundowning=1"
-              className="group p-6 rounded-3xl bg-stone-800/70 hover:bg-stone-800 border border-stone-700/60 hover:border-orange-400/80 transition-all flex items-start gap-4"
+              href="/dossier"
+              className="px-8 py-4 rounded-full bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-base shadow-xl shadow-amber-500/20 transition-all flex items-center gap-2.5 shrink-0"
             >
-              <div className="w-11 h-11 rounded-2xl bg-orange-500/20 group-hover:bg-orange-500/30 flex items-center justify-center text-orange-400 shrink-0 transition-colors">
-                <Sun className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-white text-base group-hover:text-orange-300 transition-colors">
-                  Tarcza Zmierzchowa 1800K
-                </h4>
-                <p className="text-stone-300 text-xs mt-1 leading-relaxed">
-                  Automatyczny tryb ciepłego bursztynowego spektrum światła, redukujący niepokój wieczorny i&nbsp;zaburzenia rytmu dobowego (Sundowning Syndrome).
-                </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-orange-400 group-hover:text-orange-300">
-                  Włącz Tryb Bursztynowy 1800K w&nbsp;Trybie Seniora
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
-            </Link>
-
-            <Link
-              href="/opiekun?tab=telecare"
-              className="group p-6 rounded-3xl bg-stone-800/70 hover:bg-stone-800 border border-stone-700/60 hover:border-sky-400/80 transition-all flex items-start gap-4"
-            >
-              <div className="w-11 h-11 rounded-2xl bg-sky-500/20 group-hover:bg-sky-500/30 flex items-center justify-center text-sky-400 shrink-0 transition-colors">
-                <Activity className="w-6 h-6" />
-              </div>
-              <div>
-                <h4 className="font-bold text-white text-base group-hover:text-sky-300 transition-colors">
-                  Konektor Teleopieki B2G / PZU
-                </h4>
-                <p className="text-stone-300 text-xs mt-1 leading-relaxed">
-                  Integracja z&nbsp;centrami teleopieki gminnej i&nbsp;ubezpieczycieli. Szybka dyspozycja pomocy w&nbsp;sytuacjach nagłych z&nbsp;pełną anonimizacją danych medycznych (PII Scrubber).
-                </p>
-                <span className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-sky-400 group-hover:text-sky-300">
-                  Otwórz pulpit dyspozytorski teleopieki
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </div>
+              <FileText className="w-5 h-5" />
+              <span>Otwórz Dossier B+R (PDF / Podsumowanie)</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -702,9 +756,13 @@ export default function LandingHomePage() {
           <p className="text-xs text-stone-500 leading-relaxed max-w-2xl mx-auto">
             Projekt tworzony w oparciu o techniki Terapii Walidacyjnej Naomi Feil i Terapii Reminiscencyjnej dr. Roberta Butlera. System nie zastępuje bezpośredniej opieki medycznej. W nagłych przypadkach zagrożenia życia należy dzwonić pod numer alarmowy 112.
           </p>
-          <div className="mt-6 flex items-center justify-center gap-6 text-xs text-stone-400">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-stone-400">
             <Link href="/senior" className="hover:text-amber-400 transition-colors">Tryb Seniora</Link>
+            <Link href="/senior?retro=1" className="hover:text-amber-400 transition-colors">Retro-Radio 1965</Link>
             <Link href="/opiekun" className="hover:text-amber-400 transition-colors">Portal Rodziny</Link>
+            <Link href="/opiekun?tab=voice_lab" className="hover:text-amber-400 transition-colors">Biomarkery Mowy</Link>
+            <Link href="/opiekun?tab=gmina" className="hover:text-amber-400 transition-colors">Koordynator Gminny MOPS</Link>
+            <Link href="/dossier" className="text-amber-400 hover:text-amber-300 font-bold transition-colors">Dossier B+R (Granty NCBR/FERS)</Link>
             <span>© {new Date().getFullYear()} BLISKIGLOS. Wszelkie prawa zastrzeżone.</span>
           </div>
         </div>

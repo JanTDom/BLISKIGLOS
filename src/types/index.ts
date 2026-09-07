@@ -168,3 +168,24 @@ export interface AuthSession {
   expiresAt: number;
 }
 
+// ─── FILAR 6: KOORDYNATOR GMINNY B2G / MOPS / DPS (FERS DEINSTYTUCJONALIZACJA) 
+export interface GminaSeniorRecord {
+  id: string;
+  name: string;
+  age: number;
+  addressDistrict: string;
+  lastContact: string; // np. "Dzisiaj, 11:20"
+  status: "bezpieczny" | "uwaga" | "krytyczny";
+  riskReason?: string;
+  cviTrend: "stabilny" | "spadek" | "wzrost";
+  hoursSinceLastTalk: number;
+  assignedSocialWorker: string;
+}
+
+// ─── FILAR 7: KWESTIONARIUSZ ZARITA (ZBI-12) ───────────────────────────────
+export interface ZaritQuestionItem {
+  id: number;
+  question: string;
+  selectedScore: number; // 0 - Nigdy, 1 - Rzadko, 2 - Czasem, 3 - Dosyć często, 4 - Prawie zawsze
+}
+

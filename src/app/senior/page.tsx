@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { TopNav } from "@/components/navigation/TopNav";
 import { LivingHearthSenior } from "@/components/senior/LivingHearthSenior";
+import { RetroRadioSenior } from "@/components/senior/RetroRadioSenior";
 import { voiceEngine, VoiceEngineState } from "@/lib/voice-engine";
 import { 
   getSeniorProfile, 
@@ -40,6 +41,7 @@ export default function SeniorPage() {
   const [statusLabel, setStatusLabel] = useState("Gotowa do rozmowy");
   const [sundowningMode, setSundowningMode] = useState(profile.sundowningShieldActive || false);
   const [kioskMode, setKioskMode] = useState(profile.kioskModeEnabled || false);
+  const [viewMode, setViewMode] = useState<"hearth" | "retro_radio">("hearth");
   const [speechCoherence, setSpeechCoherence] = useState(92);
   
   const [engineState, setEngineState] = useState<VoiceEngineState>({
@@ -75,6 +77,7 @@ export default function SeniorPage() {
     setProfile(loadedProfile);
     let sundowningInitial = Boolean(loadedProfile.sundowningShieldActive);
     let kioskInitial = Boolean(loadedProfile.kioskModeEnabled);
+    let retroInitial = false;
 
     if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
@@ -84,10 +87,16 @@ export default function SeniorPage() {
       if (params.get("kiosk") === "1" || params.get("kiosk") === "true") {
         kioskInitial = true;
       }
+      if (params.get("retro") === "1" || params.get("view") === "retro") {
+        retroInitial = true;
+      }
     }
 
     setSundowningMode(sundowningInitial);
     setKioskMode(kioskInitial);
+    if (retroInitial) {
+      setViewMode("retro_radio");
+    }
 
     const stored = getStoredMessages();
     if (stored.length > 0) {
@@ -446,8 +455,21 @@ export default function SeniorPage() {
           </button>
         </div>
 
-        {/* Dyskretny pasek innowacji ambientowej (Tarcza Zmierzchowa & Tryb Kioskowy) */}
-        <div className="flex items-center justify-center gap-2 mb-4">
+        {/* Dyskretny pasek innowacji ambientowej (Tarcza Zmierzchowa & Tryb Kioskowy & Retro-Radio) */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mb-4">
+          <button
+            onClick={() => setViewMode(viewMode === "hearth" ? "retro_radio" : "hearth")}
+            className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all border ${
+              viewMode === "retro_radio"
+                ? "bg-amber-900 text-amber-100 border-amber-800 shadow-sm"
+                : "bg-white/80 text-stone-700 border-amber-200 hover:bg-amber-50"
+            }`}
+            title="Przełącz na retro-odbiornik radiowy z 1965 r. (eliminacja bariery ekranu dotykowego)"
+          >
+            <Radio className="w-3 h-3 text-amber-500" />
+            <span>Widok: {viewMode === "retro_radio" ? "Retro-Radio 1965" : "Słoneczne Serce"}</span>
+          </button>
+
           <button
             onClick={toggleSundowningMode}
             className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all border ${
@@ -470,22 +492,34 @@ export default function SeniorPage() {
             }`}
             title="Tryb bezdotykowy PFRON — urządzenie słucha w tle bez klikania"
           >
-            <Radio className="w-3 h-3 text-emerald-400" />
+            <Sparkles className="w-3 h-3 text-emerald-400" />
             <span>Kiosk Bezdotykowy: {kioskMode ? "Aktywny" : "Wyłączony"}</span>
           </button>
         </div>
 
-        {/* Centralne Żywe Serce (Living Hearth 2.0 z trybem Sundowning) */}
-        <LivingHearthSenior
-          size={320}
-          isListening={engineState.isListening || engineState.isRecording}
-          isSpeaking={engineState.isSpeaking}
-          isProcessing={engineState.isProcessing}
-          userVolume={engineState.userVolume}
-          companionName={profile.companionName}
-          sundowningMode={sundowningMode}
-          onClick={handleToggleCall}
-        />
+        {/* Centralny interfejs mowy — Słoneczne Serce lub Retro-Radio 1965 */}
+        {viewMode === "retro_radio" ? (
+          <div className="mb-6 w-full flex justify-center animate-in fade-in zoom-in-95 duration-300">
+            <RetroRadioSenior
+              isSpeaking={engineState.isSpeaking}
+              isListening={engineState.isListening || engineState.isRecording}
+              onTogglePower={handleToggleCall}
+              isPowerOn={isCallActive}
+              companionName={profile.companionName}
+            />
+          </div>
+        ) : (
+          <LivingHearthSenior
+            size={320}
+            isListening={engineState.isListening || engineState.isRecording}
+            isSpeaking={engineState.isSpeaking}
+            isProcessing={engineState.isProcessing}
+            userVolume={engineState.userVolume}
+            companionName={profile.companionName}
+            sundowningMode={sundowningMode}
+            onClick={handleToggleCall}
+          />
+        )}
 
         {/* Dynamiczny wskaźnik stanu rozmowy */}
         <div className="w-full max-w-xl text-center mb-6">

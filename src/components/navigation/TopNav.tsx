@@ -77,6 +77,17 @@ export const TopNav: React.FC<TopNavProps> = ({ fontSize = "large", onFontSizeCh
             <Users className="w-4 h-4" />
             <span>Portal Rodziny</span>
           </Link>
+          <Link
+            href="/dossier"
+            className={`px-4 py-2 rounded-full text-sm font-semibold transition-all flex items-center gap-2 ${
+              pathname === "/dossier"
+                ? "bg-amber-600 text-white shadow-md shadow-amber-600/25"
+                : "text-stone-700 hover:text-stone-950 hover:bg-white/60"
+            }`}
+          >
+            <Sparkles className="w-4 h-4 text-emerald-600" />
+            <span>Dossier B+R</span>
+          </Link>
         </nav>
 
         {/* Prawa strona: status logowania, czcionka i SOS */}

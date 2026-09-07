@@ -31,12 +31,18 @@ import {
   Brain,
   Radio,
   Activity,
-  Smile
+  Smile,
+  Building2,
+  HeartHandshake
 } from "lucide-react";
 import { MemoryConstellationGraph } from "@/components/family/MemoryConstellationGraph";
 import { ClinicalNeuroBrief } from "@/components/family/ClinicalNeuroBrief";
 import { FamilyVoiceCloner } from "@/components/family/FamilyVoiceCloner";
 import { EmergencyTelecareConnector } from "@/components/family/EmergencyTelecareConnector";
+import { VoiceBiomarkerLab } from "@/components/family/VoiceBiomarkerLab";
+import { GminaCoordinatorHub } from "@/components/family/GminaCoordinatorHub";
+import { ZaritBurdenModule } from "@/components/family/ZaritBurdenModule";
+import { GenerativeLifeChronicle } from "@/components/family/GenerativeLifeChronicle";
 import { 
   getMemoryGraph, 
   getRespiteMetrics, 
@@ -54,11 +60,14 @@ import {
 
 type GuardianTab = 
   | "dashboard" 
+  | "voice_lab"
   | "constellation" 
   | "clinical" 
+  | "gmina"
+  | "zarit"
+  | "memories" 
   | "voice_cloner" 
   | "telecare" 
-  | "memories" 
   | "settings";
 
 export default function FamilyGuardianPage() {
@@ -107,7 +116,18 @@ export default function FamilyGuardianPage() {
       const tabParam = params.get("tab") as GuardianTab | null;
       if (
         tabParam &&
-        ["dashboard", "constellation", "clinical", "voice_cloner", "telecare", "memories", "settings"].includes(tabParam)
+        [
+          "dashboard",
+          "voice_lab",
+          "constellation",
+          "clinical",
+          "gmina",
+          "zarit",
+          "memories",
+          "voice_cloner",
+          "telecare",
+          "settings",
+        ].includes(tabParam)
       ) {
         setActiveTab(tabParam);
       }
@@ -207,7 +227,19 @@ export default function FamilyGuardianPage() {
             }`}
           >
             <Clock className="w-4 h-4 text-amber-600" />
-            Dziennik & Wytchnienie
+            Dziennik &amp; Wytchnienie
+          </button>
+
+          <button
+            onClick={() => setActiveTab("voice_lab")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "voice_lab"
+                ? "border-emerald-600 text-emerald-950 bg-emerald-50/50 rounded-t-xl"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <Activity className="w-4 h-4 text-emerald-600" />
+            Voice Biomarker Lab™
           </button>
 
           <button
@@ -235,6 +267,42 @@ export default function FamilyGuardianPage() {
           </button>
 
           <button
+            onClick={() => setActiveTab("gmina")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "gmina"
+                ? "border-sky-600 text-sky-950 bg-sky-50/50 rounded-t-xl"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <Building2 className="w-4 h-4 text-sky-600" />
+            Koordynator Gminny (MOPS)
+          </button>
+
+          <button
+            onClick={() => setActiveTab("zarit")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "zarit"
+                ? "border-purple-600 text-purple-950 bg-purple-50/50 rounded-t-xl"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <HeartHandshake className="w-4 h-4 text-purple-600" />
+            Tarcza Zarita (Wytchnienie)
+          </button>
+
+          <button
+            onClick={() => setActiveTab("memories")}
+            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
+              activeTab === "memories"
+                ? "border-amber-600 text-amber-950"
+                : "border-transparent text-stone-500 hover:text-stone-900"
+            }`}
+          >
+            <BookOpen className="w-4 h-4 text-amber-600" />
+            Kronika &amp; Audiobook
+          </button>
+
+          <button
             onClick={() => setActiveTab("voice_cloner")}
             className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
               activeTab === "voice_cloner"
@@ -255,19 +323,7 @@ export default function FamilyGuardianPage() {
             }`}
           >
             <Radio className="w-4 h-4 text-emerald-600" />
-            Teleopieka & PZU
-          </button>
-
-          <button
-            onClick={() => setActiveTab("memories")}
-            className={`px-4 py-3 text-sm sm:text-base font-bold border-b-2 transition-all flex items-center gap-2 shrink-0 ${
-              activeTab === "memories"
-                ? "border-amber-600 text-amber-950"
-                : "border-transparent text-stone-500 hover:text-stone-900"
-            }`}
-          >
-            <BookOpen className="w-4 h-4 text-amber-600" />
-            Kronika ({reminiscences.length})
+            Teleopieka &amp; PZU
           </button>
 
           <button
@@ -475,26 +531,53 @@ export default function FamilyGuardianPage() {
           </div>
         )}
 
-        {/* 2. ZAKŁADKA KONSTELACJA WSPOMNIEŃ (GRAF WIEDZY) */}
+        {/* 2. ZAKŁADKA VOICE BIOMARKER LAB (B+R SPEKTROGRAFIA) */}
+        {activeTab === "voice_lab" && (
+          <div className="space-y-6">
+            <VoiceBiomarkerLab />
+          </div>
+        )}
+
+        {/* 3. ZAKŁADKA KONSTELACJA WSPOMNIEŃ (GRAF WIEDZY) */}
         {activeTab === "constellation" && (
           <div className="space-y-6">
             <MemoryConstellationGraph graph={memoryGraph} />
           </div>
         )}
 
-        {/* 3. ZAKŁADKA KLINICZNY RAPORT LEKARZA */}
+        {/* 4. ZAKŁADKA KLINICZNY RAPORT LEKARZA */}
         {activeTab === "clinical" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             <ClinicalNeuroBrief
               profile={profile}
               cvi={cviMetrics}
               respite={respiteMetrics}
               messages={messages}
             />
+            <div className="pt-6 border-t border-stone-200">
+              <h3 className="font-serif text-2xl font-bold text-stone-900 mb-4">
+                Zaawansowana Aparatura Pomiarowa Mowy:
+              </h3>
+              <VoiceBiomarkerLab />
+            </div>
           </div>
         )}
 
-        {/* 4. ZAKŁADKA GŁOS CÓRKI (BEZPIECZNA KOTWICA) */}
+        {/* 5. ZAKŁADKA KOORDYNATOR GMINNY (B2G / MOPS / DPS) */}
+        {activeTab === "gmina" && (
+          <div className="space-y-6">
+            <GminaCoordinatorHub />
+          </div>
+        )}
+
+        {/* 6. ZAKŁADKA TARCZA PRZECIĄŻENIA OPIEKUNA (ZARIT ZBI-12) */}
+        {activeTab === "zarit" && (
+          <div className="space-y-6">
+            <ZaritBurdenModule />
+          </div>
+        )}
+
+        {/* 7. ZAKŁADKA GŁOS CÓRKI (BEZPIECZNA KOTWICA) */}
         {activeTab === "voice_cloner" && (
           <div className="space-y-6">
             <FamilyVoiceCloner
@@ -504,16 +587,17 @@ export default function FamilyGuardianPage() {
           </div>
         )}
 
-        {/* 5. ZAKŁADKA MOST ALARMOWY TELEOPIEKI (PZU / MOPS) */}
+        {/* 8. ZAKŁADKA MOST ALARMOWY TELEOPIEKI (PZU / MOPS) */}
         {activeTab === "telecare" && (
           <div className="space-y-6">
             <EmergencyTelecareConnector profile={profile} />
           </div>
         )}
 
-        {/* 6. ZAKŁADKA KRONIKA WSPOMNIEŃ (Reminiscence Vault) */}
+        {/* 9. ZAKŁADKA KRONIKA WSPOMNIEŃ & AUDIOBOOK */}
         {activeTab === "memories" && (
           <div className="space-y-8">
+            <GenerativeLifeChronicle />
             {/* Banner z fotografią dłoni pokoleń */}
             <div className="relative rounded-3xl overflow-hidden shadow-xl border-2 border-amber-200 bg-stone-900 text-white">
               <div className="grid grid-cols-1 md:grid-cols-12 items-center">
