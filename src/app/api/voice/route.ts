@@ -5,12 +5,12 @@ export const dynamic = "force-dynamic";
 // Mapowanie dedykowanych głosów lektorskich dla Seniorów (ciepłe, powolne, wyraźna artykulacja)
 const ELEVENLABS_SENIOR_VOICES: Record<string, string> = {
   krystyna: "xJQ0EWXEICoCWK3Ld1Ew", // Agata - ciepła, serdeczna, cierpliwa polska lektorka
-  stanislaw: "8qCMI2ZZW5ZGwmg0lM1l", // Paweł Siwek - głęboki, uziemiający, szarmancki głos radiowy
+  stanislaw: "OyB9t957VxUtN0puqGPg", // Paweł (Dojrzały Narrator) - wiek: dojrzały/senior, głęboki, szarmancki, spokojny ton
   corka_anna: "EXAVITQu4vr4xnSDxMaL", // Bella/Anna - miękki, czuły, kochający głos córki
   agata: "xJQ0EWXEICoCWK3Ld1Ew",
-  maciej: "8qCMI2ZZW5ZGwmg0lM1l",
+  maciej: "OyB9t957VxUtN0puqGPg",
   nova: "xJQ0EWXEICoCWK3Ld1Ew",
-  echo: "8qCMI2ZZW5ZGwmg0lM1l",
+  echo: "OyB9t957VxUtN0puqGPg",
 };
 
 export async function POST(req: NextRequest) {
@@ -69,8 +69,8 @@ export async function POST(req: NextRequest) {
 
     // 2. Niezawodny Fallback: OpenAI TTS-1-HD ze zwolnionym tempem 0.90x dla seniora
     if (openAiKey) {
-      const openAiVoice = (voice === "stanislaw" || voice === "maciej" || voice === "echo") 
-        ? "echo" 
+      const openAiVoice = (voice === "stanislaw" || voice === "maciej") 
+        ? "onyx" // Głęboki, dojrzały, spokojny głos męski
         : voice === "corka_anna" 
         ? "shimmer" 
         : "nova";
